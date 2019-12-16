@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<string.h>
-main()
+int main()
 {
     char a[101],b[101];
     int i,j,m,k,n;
