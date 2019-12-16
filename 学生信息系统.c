@@ -204,7 +204,6 @@ int writetofile(char *file,struct stu *head)
 	}
 	p=head->next;
 	while(p!=NULL)
-   // for(int i=0;i<3;i++)
 	{
 		fprintf(fp,"%ld %s %f\n",p->num,p->name,p->score);
         p=p->next;
