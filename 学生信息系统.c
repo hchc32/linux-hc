@@ -1,28 +1,30 @@
 #include<stdio.h> 
 #include<stdlib.h>
-
+#define  LEN 50
 struct stu* creat(void);
 void print(struct stu* p);
 struct stu* find(struct stu* p);
 int      de(struct stu *p0);
 int insert(struct stu *p0);
 int writetofile(char *file,struct stu *head);
-//int readfromfile(char *file);
-
+int readfromfile(char *file,struct stu *head);
+int openfile();
 struct stu
 {
     long num;
     char name[20];
-    float score;
+    float score; 
     struct stu *next;
 };
 char f[]="/home/hc/桌面/1.text";
 
 int main()
 {
-    struct stu *head,*p;
+    struct stu *head=NULL,*p=NULL;
     int select=1;
-   // readfromfile(f);
+   // openfile();
+ //   if(readfromfile(f,head));
+   //     printf("读入数据成功");
     while(1)
     {
         printf("**************************\n");
@@ -69,14 +71,28 @@ int main()
                 {
                     if(insert(head))                   
                         printf("已成功插入\n");
-                    else
-                        printf("有重号，插入失败!\n");
+                  //  else
+                      //  printf("有重号，插入失败!\n");
                     print(head);
                      break;
                 }
             case 0:writetofile(f,head);return 0;
-            case 5:print(head);break;
-            default:break;
+            case 5:
+                   {
+                       if(head==NULL)
+                            printf("无信息，显示失败！");           
+                       else
+                       {
+                            print(head);
+                            break;
+                       }
+                   }
+            default:
+                   {
+                       printf("请输入正确的选项:\n");
+                       getchar();
+                       continue;
+                   }
         }
     }
     return 0;
@@ -154,26 +170,30 @@ int de(struct stu *p0)      //要有两个结点，一个为找删除的，一�
 int insert (struct stu *p0)
 {
     struct stu *p;
+    int flag=0;
     p=(struct stu*)malloc(sizeof(struct stu));
     printf("请输入要插入的学号　　　姓名　　　成绩\n");
     scanf("%ld      %s      %f",&p->num,p->name,&p->score);
-   // getchar();
+    p0=p0->next;
+    while(p0->next!=NULL)
     {
-       // printf("请输入要插入的学号　　　姓名　　　成绩\n");
-       // getchar();
-        p0=p0->next;
+        if(p->num<=p0->num)
+        {
+            p->next=p0->next;
+            p0->next=p;
+            flag=1;              //已经插入，不能free掉p
+            return 1;
+        }
     }
-    if(p0->next!=NULL  &&  p0->next->num == p->num)    //寻找是否有重号，有重号则不插入
-    {
-        free(p);                                        //未插入时要释放掉申请的内存空间
-        return 0;
+    if(flag==0)
+    {   
+        p0->next=p;
+        p->next=NULL;
+        return 1;
     }
-    p->next=p0->next;
-    p0->next=p;  //已经插入，不能free掉p
-    return 1;
 }
 
-/*int readfromfile(char *file)
+int readfromfile(char *file,struct stu *p)
 {
     int i;
     FILE *fp;
@@ -185,12 +205,29 @@ int insert (struct stu *p0)
     }
     while(!feof(fp))
     {
-        fscanf (fp,"%ld %s %f",&p->num,p->name,&p->score);
+        fread(p,67,1,fp);
     }
     fclose(fp);
-    printf("文件在%s处读取完毕",f );
+    printf("文件在%s处读取完毕",f);
     return 1;
+}
+
+/*int openfile()
+{
+   char filename[LEN]="/home/hc/桌面/1.text";
+   FILE *fp;
+   printf("请输入文件的路径:");
+   scanf("%s",filename);
+   fp=fopen(filename,"aw");
+   if(fp == NULL)
+   {
+       printf("Open File Error!");
+       return 0;
+   }
+   printf("%s文件打开成功!",filename);
+   return 1;
 }*/
+
 
 int writetofile(char *file,struct stu *head)
 {
