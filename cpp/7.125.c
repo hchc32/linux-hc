@@ -2,30 +2,17 @@
 
 int main()
 {
-    char c;
+    char ch;
+    char ch1;
     int flag=0;
-    while((c=getchar())!='#')
+    while((ch=getchar())!='#')
     {
-        switch(c)
-        {
-            case '.':
-                    {
-                        c='!';
-                        flag++;
-                        break;
-                    }
-            case '!':
-                    {
-                        putchar(c);
-                        flag++;
-                        break;
-                    }
-            default:
-                break;
-        }
-        putchar(c);
+        if(ch=='e')
+            ch1=ch;
+        if(ch1=='e' && ch=='i')
+            flag++;
     }
-    printf("经历了%d次代换!",flag);
+    printf("The total count is %d",flag);
     return 0;
 }
 
