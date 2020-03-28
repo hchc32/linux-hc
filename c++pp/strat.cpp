@@ -2,7 +2,6 @@
 using namespace  std;
 int main()
 {
-
-    cout << "Hello c++pp"<<endl<<"Hello Linux!";
+    cout << "Hello c++pp" << endl;
        return 0;
 }

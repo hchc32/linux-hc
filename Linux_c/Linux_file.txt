@@ -1,0 +1,199 @@
+一.linux环境下两种操作文件的方式：
+       1. 系统I/O：系统调用接口，open(),read(),write(),lseek(),close().这些是由操作系统直接提供的API
+                    常用于硬件级别
+        2. 标准I/O：标准库的I/O函数，fopen(),fread(),fwrite(),fseek(),fclose().这些是对系统调用接口的进一步封装
+                    常用于软件级别
+二:文的创建，打开，关闭：
+        1.open()函数
+            函数所需头文件：#include<sys/types.h>
+                            #include<sys/stat.h>
+                            #include<fcntl.h>
+            函数原型:int open(const char *pathname, int flags);
+                     int open(const char *pathname, int flags,mode_t mode);
+                     第一个参数pathname是打开或者创建的含路径的文件名，第二个参数flags表示打开文件的方式
+                    //前三个为必选项
+                     O_RDONLY:  只读方式打开文件
+                     O_WRONLY:  只写方式打开文件
+                     O_RDWR:    读写方式打开文件
+                     
+                     O_CREAT:   如果文件不存在，则创建该文件
+                     O_EXCL:    如果O_CREAT被设置，此指令会检查文件是否存在，文件如果不存在，则创建该文件，否则导致文件打开出错
+                     O_TRUNC:   如果文件已经存在，则删除文件中的原有数据
+                     (flags的叠加可以用 | )    
+                     例如：新建文件，如果不存在，则新建，否则，出错-------->O_CREAT | O_EXCL
+                     如果文件被新建，指定其权限为mode(mode & ~umask)
+            返回值：成功 文件描述符（大于0的整数）------>*********返回一个最小的可用的文件描述符
+                    失败 -1，可以打印出errno
+        2.creat()函数
+            函数所需头文件：#include<sys/types.h>
+                            #include<sys/stat.h>
+                            #include<fcntl.h>
+            函数原型:int creat(const char *pathname,mode_t mode);
+            creat()相当于这样使用open()： open(const char*pathname,(O_CREAT | O_WRONLY | O_TRUNC));
+            creat()函数只能以只写的方式打开创建的文件
+        3.close()函数
+            函数所需头文件:#include<unistd.h>
+            函数原型:   int close(int fd);
+                    fd是需要关闭文件的文件描述符，文件描述符是由open或者creat函数的得到的
+            函数返回值: 成功  返回0
+                        失败  返回-1
+三.文件的读写
+        1.read()函数     ------->从指定文件读取数据
+            函数所需头文件：#include<unistd.h>
+            函数原型：ssize_t read(int fd, void *buf,size_t count);
+                    fd: fd是文件描述符
+                    buf: 指向存放读取数据的缓冲区（放数据的内存首地址）
+                    count: 读取的字节数
+            函数返回值：成功    返回读取的字节数
+                        失败    -1
+                        读到文件末尾  0
+        2.write()函数   -------->将数据写入已打开的文件
+            函数所需头文件：#include<unistd.h>
+            函数原型:   ssize_t write(int fd, void *buf, size_t count);
+            函数返回值：成功    返回读取的字节数
+                        失败    -1
+                        未写入   0
+            write()函数的第一个参数可以设置为宏，STDOUT_FILENO,STDIN_FILENO,STDERR_FILENO 用来输在显示器上。也可以用1，2，3来代替
+            注意：creat只能以可写的方式打开文件-----与open的差别
+四.文件读写指针的移动
+        1.lseek()函数   -------->移动文件读写指针的位置,也可以拓展文件大小
+            函数所需头文件：#include<sysy/types.h>
+                            #include<unistd.h> 
+            函数原型:   off_t lseek(int fildes, off_t offset , int whence);
+                        fildes:     已打开文件的文件描述符
+                        offset:     相对基准点的偏移大小
+                        whence（基准点）:有以下三种取值
+                                        SEEK_SET: 文件开头处计算偏移量，文件指针到文件开始处的距离为offset
+                                        SEEK_CUR: 从文件指针的当前位置计算偏移量，文件指针值等于当前指针值加上offset的值
+                                        SEEK_END: 文件末尾处
+            函数返回值：成功    返回新文件位置的偏移量（相对于SET）
+                        失败    返回-1
+六.dup,dup2,fcntl,ioctl系统调用
+        1.dup,dup2函数      ------------->用来复制文件描述符
+            函数所需头文件：#include<unistd.h>
+            函数原型：  int dup(int oldfd);
+                        int dupw(int oldfd,int newfd);
+            dup函数作用：dup用来复制参数oldfd所指的文件描述符。
+                        当复制成功时，返回最小的尚未被使用过的文件描述符。
+                        若有错误则返回-1.错误代码存入errno中。
+                        返回的新文件描述符和参数oldfd指向同一个文件。
+                        这两个描述符共享同一个数据结构，共享所有的锁定，读写指针和各项全现或标志位。
+            dup2函数：dup2与dup区别是dup2可以用参数newfd指定新文件描述符的数值。
+                      若参数newfd已经被程序使用，则系统就会将newfd所指的文件关闭.
+                      若newfd等于oldfd，则返回newfd,而不关闭newfd所指的文件。
+                      dup2所复制的文件描述符与原来的文件描述符共享各种文件状态。
+                      共享所有的锁定，读写位置和各项权限或flags等.
+                      例如，打印hello！，先打印在的屏幕上再打印在文件中。
+        2.fcntl函数         -------------->可以用来对已打开的文件描述符进行各种控制操作，以改变已打开文件的各种属性
+                也可以用来设置阻塞
+            函数所需头文件：#include<unistd.h>
+                            #include<fcntl.h>
+            函数原型：  int fcntl(int fd, int cmd);
+                        int fcntl(int fd, int cmd, long arg);
+                        int fcntl(int fd, int cmd, struct flock *lock);
+                        fcntl函数的功能依据cmd的不同而不同
+                        cmd:    F_SETFL: fcntl用来设置文件打开的方式为第三个参数arg指定的方式
+                                F_GETFL: fcntl用来获得文件打开的方式，失败返回-1，成功返回文件描述符
+************第三种方式与文件记录锁有关：第三个参数指向一个struct flock *lock的结构*************************************
+            struct flock *lock
+            {
+                short_l_type;    //锁的类型
+                short_l_whence;  //偏移量的起始位置，SEEK_SET,SEEK_CUR,SEEK_END
+                off_t_l_start;   //Starting offset for lock
+                off_t_l_len;     //Number of bytes to lock
+                pid_t_l_pid;     //锁的属主进程ID
+
+            }
+            其中l_whence,l_start,l_len是用来确定需要进行文件记录锁操作的区域：
+                    例如 l_len = 0  l_start = 0, l_whence = SEEK_SET表示锁整个文件
+***********多个进程中锁的不兼容规则
+        3.ioctl函数      ---------------->用来控制特殊设备文件的属性（暂时对这个函数一脸懵）
+            函数所需头文件: #include<sys/ioctl.h>
+            函数原型：  int ioctl(int fd, int request,....);
+                        fd: 已打开文件的描述符
+七.设置文件属性       ------------>修改文件属性，shell下可以用chmod
+        1.chown/fchown/lchown      ---------->用于修改文件的用户id和组id
+        函数所需头文件：#include<sys/types.h>
+                        #include<unistd.h>
+        函数原型：  int chown(const char *pathname, uid_t owner, gid_t group);
+                    int fchown(int fd, uid_t owner, gid_t group);
+                    int lchown(const char *pathname, uid_t owner, gid_t group);
+        2.umask函数     ---------------->设置文件创建时使用的屏蔽字------屏蔽权限
+        函数所需头文件：    #include<sys/types.h>
+                            #include<sys/stat.h>
+        函数原型：      mode_t umask(mode_t mask);
+                S_IRWXU  用户所有权限          
+                S_IRWXG  用户组所有权限
+                S_IRWXO  其他用户所有权限
+八.文件的移动和删除
+        1.rename函数    --------------->用来修改文件名或文件的位置
+        函数所需头文件：    #include<stdio.h>
+        函数原型：  int rename(const char *oldpath,const char *newpath);
+        实现mv命令
+
+        2.删除的函数
+        函数所需头文件：    #include<unistd.h>
+        函数原型：  int unlink(const char *pathname);
+                    int remove(const char *pathname);
+九.目录的创建与删除
+        1.目录的创建函数
+        函数所需头文件：    #include<sys/stat.h>
+                            #include<sys/types.h>
+        函数原型：  int mkdir(const char *pathname, mode_t mode);
+        返回值：    成功返回0   错误返回-1、
+        2.目录的删除函数   ------------->rmdir只能删除由参数pathname指定的空目录
+        函数所需头文件：    #include<unistd.h>
+        函数原型：  int rmdir(const char *pathname);
+        返回值：    成功返回0   错误返回-1、
+        3.获取当前目录函数
+        函数所需头文件：    #include<unistd.h>
+        函数原型：  char *getcwd(char *buf , size_t size);
+                    char *get_current_dir_name(void);
+                    char *getwd(char *buf);
+        函数执行成功则将结果复制到参数buf所指的内存空间，或时返回自动配置的字符串指针
+        失败返回NULL
+        4.设置工作目录
+        函数所需头文件：    #include<unistd.h>  
+        函数原型:       int chdir(const char *path);
+                        int fchdir(int fd);
+        chdir 用来将当前工作目录改为由参数path指定的目录
+        fchdir用来将当前工作目录改为由参数fd指定的目录
+        返回值：成功返回0        失败返回-1
+        5.获取目录信息的函数
+            (1).opendir函数  ----------->用来打开参数name指定的目录
+            函数所需头文件：    #include<sys/types.h>
+                                #include<dirent.h>
+            函数原型：  DIR *opendir(const char *name);
+            返回DIR *形态的目录流  （懵）------>类似于FILE文件描述符
+                    失败返回NULL
+            (2).readdir函数  ------------>用来从参数dir所指向的目录中读取出目录项的信息
+            函数所需头文件：    #include<sys/types.h>
+                                #include<dirent.h>
+            函数原型:   struct dirent *readdir(DIR *dir);
+            返回值：    一个struct dirent结构的指针
+                           struct dirent
+                           {
+                                long d_ino; /* inode number 索引节点号 */
+                                off_t d_off; /* offset to this dirent 在目录文件中的偏移 */
+                                unsigned short d_reclen; /* length of this d_name 文件名长 */
+                                char d_name [NAME_MAX+1]; /* file name (null-terminated) 文件名，最长255字符 */
+                           } 
+            第一次调用返回该目录下第一个文件信息，直到NULL
+            (3).closedir函数    -------------->用来关闭参数dir指向的目录
+            函数所需头文件：    #include<sys/types.h>
+                                #include<dirent.h>
+            函数原型：  int  closedir(DIR* dir);
+            返回值： 成功  0      错误  -1
+        
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    注意stat与lstat的区别：
+        stat碰到链接，会追述到源文件，穿透！！lstat并不会穿透。
+            
+
+
+            
+    
+        
+
+
+            

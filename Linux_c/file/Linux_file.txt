@@ -1,0 +1,67 @@
+一.linux环境下两种操作文件的方式：
+        1. 系统I/O：系统调用接口，open(),read(),write(),lseek(),close().这些是由操作系统直接提供的API
+                    常用于硬件级别
+        2. 标准I/O：标准库的I/O函数，fopen(),fread(),fwrite(),fseek(),fclose().这些是对系统调用接口的进一步封装
+                    常用于软件级别
+二:文件的创建，打开，关闭：
+        1.open()函数
+            函数所需头文件：#include<sys/types.h>
+                            #include<sys/stat.h>
+                            #include<fcnt1.h>
+            函数原型:int open(const char *pathname, int flags);
+                     int open(const char *pathname, int flags,mode_t mode);
+                     第一个参数pathname是打开或者创建的含路径的文件名，第二个参数flags表示打开文件的方式
+                    
+                     O_RDONLY:  只读方式打开文件
+                     O_WRONLY:  只写方式打开文件
+                     O_RDWR:    读写方式打开文件
+                     O_CREAT:   如果文件不存在，则创建该文件
+                     O_EXCL:    如果O_CREAT被设置，此指令会检查文件是否存在，文件如果不存在，则创建该文件，否则导致文件打开出错
+                     O_TRUNC:   如果文件已经存在，则删除文件中的原有数据
+                     (flags的叠加可以用 | )     例如：新建文件，如果不存在，则新建，否则，出错-------->O_CREAT | O_EXCL
+                     如果文件被新建，指定其权限为mode(八进制表示法)
+            返回值：成功 文件描述符（大于0的整数）------>*****补充文件描述符
+                    失败 -1，可以打印出errno
+        2.creat()函数
+            函数所需头文件：#include<sys/types.h>
+                            #include<sys/stat.h>
+                            #include<fcnt1.h>
+            函数原型:int creat(const char *pathname,mode_t mode);
+            creat()相当于这样使用open()： open(const char*pathname,(O_CREAT | O_WRONLY | O_TRUNC));
+        3.close()函数
+            函数所需头文件:#include<unistd.h>
+            函数原型:   int close(int fd);
+                    fd是需要关闭文件的文件描述符，文件描述符是由open或者creat函数的得到的
+            函数返回值: 成功  返回0
+                        失败  返回-1
+三.文件的读写
+        1.read()函数     ------->从指定文件读取数据
+            函数所需头文件：#include<unistd.h>
+            函数原型：ssize_t read(int fd, void *buf,size_t count);
+                    fd: fd是文件描述符
+                    buf: 指向存放读取数据的缓冲区（放数据的内存首地址）
+                    count: 读取的字节数
+            函数返回值：成功    返回读取的字节数
+                        失败    -1
+        2.write()函数   -------->将数据写入已打开的文件
+            函数所需头文件：#include<unistd.h>
+            函数原型:   ssize_t write(int fd, void *buf, size_t count);
+            函数返回值：成功    返回读取的字节数
+                        失败    -1
+四.文件读写指针的移动
+        1.lseek()函数   -------->移动文件读写指针的位置
+            函数所需头文件：#include<sysy/types.h>
+                            #include<unistd.h> 
+            函数原型:   off_t lseek(int fildes, off_t offset , int whence);
+                        fildes:     已打开文件的文件描述符
+                        offset:     相对基准点的偏移大小
+                        whence（基准点）:有以下三种取值
+                                        SEEK_SET: 文件开头处
+                                        SEEK_CUR: 当前位置
+                                        SEEK_END: 文件末尾处
+            函数返回值：成功    返回新文件位置的偏移量（相对于SET）
+                        失败    返回-1
+
+
+
+
