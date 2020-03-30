@@ -84,7 +84,7 @@
             pid_t waitpid(pid_t pid, int *wstatus, int options);
                 pid：
                     <-1 组ID
-                    =-1 回收任意
+                    =-1 回收所有的
                     >0  回收指定的pid
                     =0  回收和调用进程组ID相同组内的子进程
                 options
