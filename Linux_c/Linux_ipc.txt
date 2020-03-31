@@ -130,6 +130,43 @@ IPC:    (InterProcessCommunication)     进程间通信，通过内核提供的�
                 write(fd1,"hello,world",11);
                 close(fd1);
 
+5.内存映射区
+    1.mmap - 创建内存映射
+        
+        作用:将磁盘文件的数据映射到内存,用户通过修改内存就能修改磁盘文件
+        
+        函数原型:
+            void *mmap(
+                       void *addr,     //映射区首地址，传ＮＵＬＬ
+                       size_t length,  //映射区大小   (一般是4k的正整数倍)
+                       int prot,       //映射区权限   
+                                            PROT_READ --映射区必须有读权限
+                                            PROT_WRITE -- 写权限
+                       int flags,      //标志位参数
+                                            MAP_SHARED
+                                            修改的内存数据会同步到磁盘
+                                            MAP_PRIVATE
+                                            修改的内存数据不会同步到磁盘
+                       int fd,         //文件描述符
+                                            是要映射的文件的文件描述符
+                                            怎么得到?
+                                                open函数
+
+                       off_t offset    //映射文件的偏移量
+                            映射的时候文件指针的偏移量
+                                偏移量必须是4k的整数倍
+                                一般为0,如果特殊需要,可以按规定设置
+                       );
+        函数返回值:成功  返回一个指向映射区的指针，指向映射区的首地址
+                   失败  返回MAP_FAILED        
+    2.munmap - 释放内存映射区
+        函数原型:int munmap(void *addr, size_t length);
+                 addr 　mmap的返回值 == 映射区的首地址
+                 length mmap的第二个参数
+        
+
+
+
 
 
 
