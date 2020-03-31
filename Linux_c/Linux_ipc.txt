@@ -86,12 +86,49 @@ IPC:    (InterProcessCommunication)     进程间通信，通过内核提供的�
                 ～修改文件的属性---open时候的属性
             设置方法：
                 获取原来的flags（属性）
-                int flags = fcntl(fd[0],F_GETTFL);
+                int flags = fcntl(fd[0],F_GETFL);
                 设置新的flags
                 flags |= O_NONBLOCK;
                 fcntl(fd[0],F_SETFL,flags);
             非阻塞设置成功·
 
+4.fifo -有名管道
+    
+    1.特点：
+        · 有名管道
+        · 在磁盘上有一个文件ls -l时文件类型为p->pipe
+        · 是一个伪文件，在磁盘上大小永远为0
+        · 在内核中有一个对应的缓冲区
+        · 半双工的通信方式
+    
+    2.使用场景：
+        没有血缘关系的进程间通信
+
+    3.创建方式
+        
+        shell命令：make file 管道名称
+        
+        函数：mkfifo
+            函数所在头文件：#include <sys/types.h>
+                            #include <sys/stat.h>
+
+            函数原型：int mkfifo(const char *pathname, mode_t mode);
+            函数返回值：成功返回0，失败返回-1
+    4.fifo文件可以使用IO函数进行操作
+        open/close
+        read/write
+        不能使用lseek
+    5.进程间通信
+        myfifo --> fifo文件
+            两个不相干的进程 A(a.c)  B(b.c)
+            a.c ---> read
+                int fd = open("myfifo",O_RDONLY);
+                read(fd,buf,sizeof(buf));
+                close(fd);
+            b.c ---> write
+                int fd1 = open("myfifo",O_WRONLY);
+                write(fd1,"hello,world",11);
+                close(fd1);
 
 
 

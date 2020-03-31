@@ -22,7 +22,6 @@ int main()
     pid_t pid = fork();
     if(pid > 0) //父进程
     {
-        sleep(3);
         //写
         close(fd[0]);
         dup2(fd[1],1);
@@ -32,6 +31,7 @@ int main()
     }
     else if(pid == 0)//子进程
     {
+        //sleep(1);
         //读
         close(fd[1]);
         dup2(fd[0],0);
