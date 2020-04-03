@@ -39,9 +39,44 @@ man 7 signal
         函数原型: int kill(pid_t pid, int sig);
         函数所在头文件:#include <sys/types.h>
                        #include <signal.h>
+    
+    2.raise -->自己给自己发信号
+        函数原型: int raise(int sig); 
+        函数所在头文件:#include<signal.h>
+    3.abort -->给自己发送异常终止信号
+        函数原型：void abort(void);
+            没有参数没有返回值，永远不会调用失败
+    4.闹钟(定时器)
+        alarm --设置定时器(每个进程只有一个定时器)
+    *******使用的是自然定时法
+            不受进程状态的影响 
+
+        函数原型: unsigned int alarm(unsigned int seconds);
+        函数所在头文件:#include<unistd>
+            如果设置为0,闹钟被取消
+        
+        对于time ./use_alarm.c
+            real time =用户+内核+损耗
+            损耗来自:文件IO操作(用文件重定向可以节省时间)
+    5.setitimer --定时器，并表现周期性定时
+        函数原型：int setitimer(int which, const struct itimerval *new_value,
+                    struct itimerval *old_value);
+        函数所在头文件:#include<sys/time.h>
+        
 
 
 
+
+
+
+
+
+
+
+
+
+
+                    
 
 
 
