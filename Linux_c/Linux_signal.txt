@@ -59,11 +59,62 @@ man 7 signal
             real time =用户+内核+损耗
             损耗来自:文件IO操作(用文件重定向可以节省时间)
     5.setitimer --定时器，并表现周期性定时
-        函数原型：int setitimer(int which, const struct itimerval *new_value,
-                    struct itimerval *old_value);
+        函数原型：int setitimer(
+                                int which, 
+                                const struct itimerval *new_value,
+                                struct itimerval *old_value
+                                );
+        struct itimerval{
+                            struct timeval it_interval; //定时器循环周期
+                            struct timeval it_val;      //第一次触发定时器时间
+                        }                    
+        struct timeval{
+                            time_t tv_sec;   //秒
+                            suseconds_t tv_usec; //微秒
+                        }   
         函数所在头文件:#include<sys/time.h>
+8.自定义信号集(set)
+    1.操作自定义信号集的函数:
+        1.int sigemptyset(sigset_t *set);  
+            作用：将set集合置空，也就是将每个信号的标志为置位0
         
+        2.int sigfillset(sigset_t *set);
+            作用：将所有的信号加入ｓｅｔ集合，也就是将每个信号的标志位置为１
+        3.int sigaddset(sigset_t *set, int signum);
+            作用：将某一个信号添加到set集合里用来阻塞该信号
+        4.int sigdelset(sigset_t *set, int signum);
+            作用：从set集合中删除掉该信号,也就是将该信号的标志位置为0
+        5.int sigismember(const sigset_t *set, int signum);
+            作用:判断信号是否存在
+    2.sigprocmask函数
+        将自定义信号集设置给阻塞信号集
+        函数原型：
+            int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
+    3.sigpenging读取当前进程的未决信号集
+        函数原型:int sigpending(sigset_t *set);
+            参数set -- 内核将未决信号集写入set(传出参数)
 
+9.信号捕捉
+    1.siganl函数 --->回掉函数
+        typedef void (*sighandler_t)(int); -->函数指针
+        
+        sighandler_t signal(int signum, sighandler_t handler);
+    2.sigaction函数
+        函数原型:int sigaction(int signum, const struct sigaction *act,struct sigaction *oldact);
+            参数:signum -->要捕捉的信号
+                 struct sigaction {
+                    void  (*sa_handler)(int);
+                        常用的回调函数
+                    void  (*sa_sigaction)(int, siginfo_t *, void *)
+                    sigset_t  sa_mask;
+                        在信号处理函数(以上两个函数任选一个)执行过程中，临时屏蔽指定的信号,可以用sigempty等来处理
+                    int     sa_flags;
+                        O --- sa_handler
+                        设置为其他数字　--- sa_sigacation
+                    void     (*sa_restorer)(void);
+                        一般不用
+                                    };
+                第三个参数:上一次捕捉时候的设置,一般写为NULL
 
 
 
