@@ -90,6 +90,12 @@ man 7 signal
         将自定义信号集设置给阻塞信号集
         函数原型：
             int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
+                参数：how:
+                        SIG_BLOCK   设置阻塞
+                        SIG_UNBLOCK 解除阻塞
+                        SIG_SETMASK   设置ｓｅｔ为新的阻塞信号集
+                      set 传入的信号集
+                      oldset 旧的信号集,传出参数
     3.sigpenging读取当前进程的未决信号集
         函数原型:int sigpending(sigset_t *set);
             参数set -- 内核将未决信号集写入set(传出参数)
@@ -115,8 +121,9 @@ man 7 signal
                         一般不用
                                     };
                 第三个参数:上一次捕捉时候的设置,一般写为NULL
-
-
+10.SIGCHLD信号处理
+    子进程在暂停或退出的时候会发送SIGCHLD,我们可以通过捕捉SIGCHLD信号来回收子进程
+        
 
 
 
