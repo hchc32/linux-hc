@@ -52,25 +52,27 @@ void Clear_Stack(LinkStack* head)
     {
         return;
     }
-    LinkStackptr temp;
-    while( head->size_stack-- )
+    LinkStackptr temp = NULL;
+    while( head->size_stack != 0 )
     {
         temp = head->top->next;
         free(head->top);
         head->top = temp;
+        head->size_stack--;
     }
 }
 
 //若栈存在,销毁栈
-void Destroy_Stack(LinkStack *head)
+LinkStack* Destroy_Stack(LinkStack *head)
 {
     if(head == NULL)
     {
-        return;
+        return NULL;
     }
     Clear_Stack(head);
     free(head);
     head = NULL;
+    return head;
 }
 
 //若栈不为空,获取栈顶的元素
