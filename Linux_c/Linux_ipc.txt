@@ -1,4 +1,5 @@
-IPC:    (InterProcessCommunication)     进程间通信，通过内核提供的缓冲区进行数据交换的机制/
+IPC:    (InterProcessCommunication) 
+    进程间通信，通过内核提供的缓冲区进行数据交换的机制/
 
 ***********阻塞与非阻塞：是文件的属性，而不是函数的属性
 
@@ -78,7 +79,7 @@ IPC:    (InterProcessCommunication)     进程间通信，通过内核提供的�
             函数所在头文件： #include<unistd.h>
     10.如何设置非阻塞
         
-        管道读写两端默认为非阻塞
+        管道读写两端默认为阻塞
         
         设置读端为非阻塞pipe(fd[0])
             fcntl - 变参函数

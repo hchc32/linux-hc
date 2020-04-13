@@ -12,17 +12,17 @@ int main()
         exit(1);
     }
     int flags;
-
     //获取文件权限
     flags = fcntl(fd[0],F_GETFL);
     flags |= O_NONBLOCK;
     //设置非阻塞
     fcntl(fd[0],F_SETFL,flags);
-    
     pid_t pid = fork();
     if(pid > 0) //父进程
     {
+    //    sleep(1);
         //写
+        sleep(1);
         close(fd[0]);
         dup2(fd[1],1);
         execlp("ps","ps","ajx",NULL);
@@ -31,7 +31,6 @@ int main()
     }
     else if(pid == 0)//子进程
     {
-        //sleep(1);
         //读
         close(fd[1]);
         dup2(fd[0],0);
