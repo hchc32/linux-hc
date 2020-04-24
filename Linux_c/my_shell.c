@@ -15,12 +15,14 @@ void print_prompt();
 void get_input(char *buf);  //获取输入的命令字符串
 void explain_input(char *buf, int *argcount , char arglist[100][256]); //解释命令字符串
 int find_command (char *command);   //寻找命令是否存在
+void do_cmd(int argcount ,char arglist[100][256]);
 
 int main(int argc ,char *argv[])
 {
     int i;
     int argcount = 0;
     char *buf = NULL;
+    char arglist[100][256];
     buf = (char *)malloc(256);
     if(buf == NULL)
     {
@@ -32,13 +34,26 @@ int main(int argc ,char *argv[])
         memset(buf,'\0',256);
         print_prompt();
        //获区键盘输入
-        get_input(buf);
+       get_input(buf);
        //如果输入的命令是exit或logout则退出
        if(strcmp(buf,"exit\n") == 0 || strcmp(buf,"logout\n") == 0)
        {
            break;
        }
+       for(int i = 0; i < 100; i++)
+       {
+           arglist[i][0] = '\0';
+       }
+       argcount = 0;
+       explain_input(buf,&argcount,arglist);
+       do_cmd(argcount,arglist);
     }
+
+       if(buf != NULL)
+       {
+           free(buf);
+           buf = NULL;
+       }
     return 0;
 }
 
@@ -103,6 +118,7 @@ void do_cmd(int argcount ,char arglist[100][256])
     int flag = 0;              //是否有符号的标志
     int how = 0;               //符号的种类
     char *file;                //存储特殊符号后的字符
+    char *argnext[argcount+1];
     //将命令取出
     for(int i  = 0; i < argcount ; i++)
     {
@@ -197,8 +213,14 @@ void do_cmd(int argcount ,char arglist[100][256])
         {
             if(strcmp(arg[i],"|") == 0)
             {
-                file = arg[i+1];
-                arg[i] == NULL;
+                arg[i] = NULL;
+                int j;
+                for(j = i + 1; arg[j] != NULL ; j++)
+                {
+                    argnext[j-1-i] = arg[j];
+                }
+                argnext[j-1-i] = arg[j];
+                break;
             }
         }
     }
@@ -217,7 +239,7 @@ void do_cmd(int argcount ,char arglist[100][256])
             {
                 if(!find_command(arg[0]))
                 {
-                    printf("%s : command not found ! \n line : %d\n",__LINE__);
+                    printf("%s : command not found ! \n line : %d\n",arg[0],__LINE__);
                     exit(0);
                 }
                 execvp(arg[0],arg);
@@ -225,7 +247,7 @@ void do_cmd(int argcount ,char arglist[100][256])
             }
             break;
         }
-　　　　//有 > 的命令        
+        //有 > 的命令        
         case 1:
         {
             int fd;
@@ -233,7 +255,7 @@ void do_cmd(int argcount ,char arglist[100][256])
             {
                 if(!find_command(arg[0]))
                 {
-                    printf("%s : command not found ! \n line : %d\n",__LINE__);
+                    printf("%s : command not found ! \n line : %d\n",arg[0],__LINE__);
                     exit(0);
                 }
                 fd = open(file,O_RDWR | O_CREAT | O_TRUNC,0644);
@@ -252,7 +274,7 @@ void do_cmd(int argcount ,char arglist[100][256])
             {
                 if(!find_command(arg[0]))
                 {
-                    printf("%s : command not found ! \n line : %d\n",__LINE__);
+                    printf("%s : command not found ! \n line : %d\n",arg[0],__LINE__);
                     exit(0);
                 }
                 fd = open(file,O_RDONLY);
@@ -265,8 +287,49 @@ void do_cmd(int argcount ,char arglist[100][256])
         //有 | 的命令
         case 3:
         {
+            if(pid == 0)
+            {
+                int pid2;
+                int fd2;
+                if((pid2 = fork()) < 0)
+                {
+                    printf("fork2 error\n");
+                    return ;
+                }
+                else if(pid2 == 0)
+                {
+                    if( !(find_command(arg[0])) )
+                    {
+                        printf("%s : command not found ! \n line : %d\n",arg[0],__LINE__);
+                        exit(0);
+                    }
+                    fd2 = open("/tmp/youdonotknowfile",O_WRONLY | O_CREAT | O_TRUNC,0644);
+                    dup2(fd2,1);
+                    execvp(arg[0],arg);
+                    exit(0);
+                }
 
-
+                //父进程逻辑
+                int status2;
+                if( waitpid(pid2 , &status2 , 0) == -1 )
+                {
+                    printf("wait for child process error! line : %d\n",__LINE__);
+                }
+                if( !(find_command(argnext[0])) )
+                {
+                    printf("%s : command not found ! \n line : %d\n",argnext[0],__LINE__);
+                    exit(0);
+                }
+                fd2 = open("/tmp/youdonotknowfile",O_RDONLY);
+                dup2(fd2,0);
+                execvp(argnext[0],argnext);
+                //删除文件
+                if(remove("/tmp/youdonotknowfile"))
+                {
+                    printf("remove file error ! line : %d\n",__LINE__);  
+                }
+                exit(0);
+            }
             break;
         }
         default: 
