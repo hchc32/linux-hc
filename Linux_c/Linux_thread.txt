@@ -1,0 +1,57 @@
+1.线程
+    
+    线程的概念：轻量集的进程，一个进程内部可以有多个线程，默认情况下一个进程只有一个线程
+
+    线程是最小的执行单位，进程是最小的系统资源分配单位
+    
+    内核实现都是通过clone函数实现的
+
+    线程也有自己的pcb,但是地址空间是共享的
+
+    1.线程共享资源
+        1.文件描述符表
+        2.每种信号的处理方式
+        3.当前工作目录
+        4.用户ID 和组ID
+        5.内存地址空间(不包括stack)
+    2.线程非共享资源
+        1.线程ID
+        2.处理器现场和栈指针
+        3.独立的栈空间(用户空间栈)
+        4.errno变量
+        5.信号屏蔽字
+        6.调度优先级
+    3.线程中获取错误码对应的错误信息
+        char *strerror(int errnum);
+    4.创建线程函数
+        函数所在头文件:#include<pthread.h>
+        
+        函数原型:int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+                   void *(*start_routine) (void *), void *arg);
+            thread :　线程的id（传出参数）
+            attr : 线程的属性
+            第三个参数:一个函数指针,void *func(void *)
+            arg : 线程执行函数的参数
+        
+        函数返回值:
+            成功返回0
+            失败返回erron
+
+        编译的时候需要加pthread库
+    5.线程的退出函数
+        函数所在头文件:#include<pthread.h>
+        函数原型:void pthread_exit(void *retval);
+        
+        线程退出的注意事项：
+                在线程中使用pthread_exit
+                在线程中使用return(主控线程return代表退出进程)
+                exit代表退出整个进程
+
+    6.线程回收函数(阻塞等待回收)
+        函数原型：int pthread_join(pthread_t thread, void **retval);
+            thread创建的时候第一个传出参数
+            retval代表的传出线程的退出信息(二级指针)
+
+        
+
+
