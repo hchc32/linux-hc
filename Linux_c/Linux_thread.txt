@@ -131,13 +131,14 @@ number.
             2.互斥锁的使用步骤：
                 1.创建互斥锁 pthread_mutex_t mutex;
                 2.初始化:pthread_mutex_init(&mutex,NULL);
+                        ---可以认为mutex=1,有一把可用的锁
                 3.找到线程共同操作的共享数据:
                     1.加锁: pthread_mutex_lock(&mutex);//阻塞线程
-                    
+                        ---可以认为mutex=0,这把锁被用了
                     pthread_mutex_trylock(&mutex);//如果锁上锁,直接返回,不阻塞
-                    
+                     
                     ......共享数据操作
-
+                        尽量使得lock和unlock的区域很小
                     解锁:pthread_mutex_unlock(&mutex);
                         　阻塞在锁上的线程会被唤醒
                 4.销毁:pthread_mutex_destory(&mutex);
@@ -155,5 +156,39 @@ number.
                     pthread_mutex_trylock(pthread_mutex_t *mutex);
                 5.解锁
                     pthread_mutex_unlock(pthread_mutex_t *mutex);
-                    
+            4.互斥锁的特点:
+                    多个线程访问共享数据的时候是串行的
+            5.互斥锁的使用缺点
+                    效率低
+
+    12.死锁
+        
+        1.自己锁自己,creat两次锁,第二次creat会阻塞在此处
+
+        2.i
+
+    13.读写锁(是一把锁)
+        
+        1.读写锁变量: pthread_rwlock_t lock;
+        
+        2.读写锁的类型
+            
+            读锁:对内存做读操作
+            
+            写锁:对内存做写操作
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
