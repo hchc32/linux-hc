@@ -37,9 +37,10 @@
             成功返回0
             失败返回erron
 
-        编译的时候需要加pthread库
+        编译的时候需要加pthread库 -lpthread
     5.线程的退出函数
         函数所在头文件:#include<pthread.h>
+
         函数原型:void pthread_exit(void *retval);
         
         线程退出的注意事项：
@@ -50,8 +51,55 @@
     6.线程回收函数(阻塞等待回收)
         函数原型：int pthread_join(pthread_t thread, void **retval);
             thread创建的时候第一个传出参数
-            retval代表的传出线程的退出信息(二级指针)
-
+            retval代表的退出线程的退出信息(二级指针)
+        作用：回收子线程的ＰＣＢ
+            
+    7.线程杀死函数
+        函数原型:
+            int pthread_cancel(pthread_t thread);
+        函数所在头文件:#include<pthread>;
         
+        函数返回值:成功返回0,失败返回erron值.
+        
+        被此函数杀死的线程，退出的信息为－１
+        要能被杀死，必须要进行一次系统调用
+        pthread_testcancel()添加取消点
+
+    8.线程分离函数
+        函数原型:
+            int pthread_detach(pthread_t thread);
+        函数所在头文件:
+            #include<pthread>
+        函数返回值:
+            On  success,  pthread_detach()  returns  0; on error, it returns an error
+number.
+        调用该函数，此时不需要pthread_join回收资源
+        
+        设置成功后，子线程会自动回收自己的PCB
+
+    9.通过属性设置分离属性
+        
+        1.线程属性类型:pthread_attr_t attr;
+
+        2.线程属性操作函数:
+            
+            1.对线程属性变量的初始化:
+                int pthread_attr_init (pthread_attr_t* attr);
+
+            2.设置线程分离属性
+                int pthread_attr_setdetachstate
+                {
+                    pthread_attr_t* attr,
+                    int detachstate;
+                };
+                参数：
+                    attr:线程属性
+                    detachstate:
+                        PTHREAD_CREATE_DATACHED(分离)
+        
+                        PTHREAD_CREATE_JOINABLE(未分离)
+            3.释放线程资源函数：
+                int pthread_attr_destory(pthread_attr_t* attr);
+
 
 
