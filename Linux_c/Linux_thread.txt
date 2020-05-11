@@ -100,6 +100,60 @@ number.
                         PTHREAD_CREATE_JOINABLE(未分离)
             3.释放线程资源函数：
                 int pthread_attr_destory(pthread_attr_t* attr);
+    10. 两个线程对同一个全局变量进行操作数据会混乱:
+            
+        混乱原因:
+                1.多个线程操作共享资源
+                2.cpu调度问题
 
+        如何解决:   进行线程同步
+    
 
+    11.线程同步
+        
+        1.什么叫同步?
+            按照先后顺序执行操作
+
+        2.给共享资源加锁来实现串行
+            １．本来多线程访问共享资源的时候，可以并行，通过加锁
+                将并行改为串行
+            ２．如果锁是锁着的
+                    线程阻塞，阻塞在这把锁上
+                如果锁是打开的
+                    线程访问共享资源
+                    再将这把锁锁上
+                    访问结束后就会解锁
+        3.互斥锁(互斥量)
+            
+            1.互斥锁类型:
+                pthread_mutex_t mutex
+            
+            2.互斥锁的使用步骤：
+                1.创建互斥锁 pthread_mutex_t mutex;
+                2.初始化:pthread_mutex_init(&mutex,NULL);
+                3.找到线程共同操作的共享数据:
+                    1.加锁: pthread_mutex_lock(&mutex);//阻塞线程
+                    
+                    pthread_mutex_trylock(&mutex);//如果锁上锁,直接返回,不阻塞
+                    
+                    ......共享数据操作
+
+                    解锁:pthread_mutex_unlock(&mutex);
+                        　阻塞在锁上的线程会被唤醒
+                4.销毁:pthread_mutex_destory(&mutex);
+            3.互斥锁相关函数:
+                1.初始化互斥锁:
+                    int pthread_mutex_init(pthread_mutex_t *restrict mutex,
+                            const pthread_mutexattr_t *restrict attr);
+                2.销毁互斥锁
+                    pthread_mutex_destory(pthread_mutex_t *mutex);
+                3.加锁
+                    pthread_mutex_lock(pthread_mutex_t *mutex);
+                    如果加锁的时候,锁已经被锁上了,线程会一直阻塞在锁的位置
+                    锁被打开的时候解除阻塞
+                4.尝试加锁
+                    pthread_mutex_trylock(pthread_mutex_t *mutex);
+                5.解锁
+                    pthread_mutex_unlock(pthread_mutex_t *mutex);
+                    
 
