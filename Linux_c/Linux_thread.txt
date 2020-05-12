@@ -165,8 +165,16 @@ number.
         
         1.自己锁自己,creat两次锁,第二次creat会阻塞在此处
 
-        2.i
-
+        2.线程1获取锁a，线程2获取锁b，两个线程循环等待，相互阻塞
+            死锁预防：
+                循环等待条件：给资源编号，资源只能按序申请
+                请求保持条件：资源静态分配，一次申请完所有资源
+                不可剥夺条件：剥夺资源
+                互斥条件：使用共享资源
+            死锁避免：
+                银行家算法
+            死锁解除：杀掉进程，进程回退
+    
     13.读写锁(是一把锁)
         
         1.读写锁变量: pthread_rwlock_t lock;
@@ -176,6 +184,57 @@ number.
             读锁:对内存做读操作
             
             写锁:对内存做写操作
+        3.读写锁的特征
+            1.线程A加读锁成功，之后读线程仍可加读锁
+                读共享
+            2.线程A加写锁成功，则读写锁均阻塞
+                写独占
+            3.线程A加读锁成功，则写锁阻塞
+                读写不能同时
+                写的优先级高
+       4. 读写锁的场景
+            线程A加写锁成功，线程B请求读锁
+                B阻塞
+            线程A持有读锁，线程B请求写锁
+                B阻塞
+            线程A拥有读锁， 线程B请求读锁
+                B加锁成功
+            
+            读锁加锁成功，之后读锁能够加锁成功    
+            读锁加锁成功，之后写锁阻塞
+            写锁加锁成功，之后读锁阻塞
+            写锁加锁成功，之后写锁阻塞
+
+        5.读写锁适用的场景
+            程序中的读操作远多于写操作
+        6.主要操作函数
+            定义读写锁:pthread_rwlock_t lock;
+
+            初试化读写锁
+                pthread_rwlock_init(
+
+                pthread_rwlock_t *reatrict rwlock,  //需要初试化锁的地址
+
+                const pthread_rwlockattr_t *restrict attr  //锁的属性，默认传NULL
+                );
+
+            销毁锁
+                pthread_rwlock_destroy(pthread_rwlock_t *rwlock);
+
+            加读锁（阻塞）
+                pthread_rwlock_rdlock(pthread_rwlock_t *rwlock);
+
+            加写锁（阻塞）
+                pthread_rwlock_wrlock(pthread_rwlock_t *rwlock);
+
+            尝试加读锁（不阻塞，未加锁返回0，已加锁返回错误号）
+                pthread_rwlock_tryrdlock(pthread_rwlock_t *rwlock);
+
+            尝试加写锁（不阻塞，未加锁返回0，已加锁返回错误号）
+                pthread_rwlock_trywrlock(pthread_rwlock_t *rwlock);
+
+            解锁
+                pthread_rwlock_unlock(pthread_rwlock_t *rwlock);
             
 
 
