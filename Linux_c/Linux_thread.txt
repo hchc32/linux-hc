@@ -235,7 +235,82 @@ number.
 
             解锁
                 pthread_rwlock_unlock(pthread_rwlock_t *rwlock);
+       
+        读写锁,互斥锁可以阻塞线程,但不是任何时候都能阻塞线程
+         
+    14.条件变量
+        (不满足条件的时候让代码阻塞)
+        1.条件变量不是锁,但是条件变量可以阻塞线程
+        
+        2.实现线程同步：条件变量+互斥锁
+                互斥锁:保护一块共享数据
+                条件变量:引起阻塞
+                //生产者和消费者模型
+
+        3.条件变量的两个动作:
+            条件不满足:阻塞进程
+            条件满足:通知阻塞的进程开始工作
+
+        4.条件变量的类型:
+            pthread_cond_t cond;(定义一个变量)
+
+        5.主要函数:
+            1.初始化一个条件变量
+                int pthread_cond_init
+                (   
+                    pthread_cond_t *restrict cond,
+                    const pthread_condattr_t *restrict attr //属性,一般为NULL 
+                );
+            2.销毁一个条件变量:
+                int pthread_cond_destroy(pthread_cond_t *cond);
+            3.阻塞等待一个条件变量:
+                int pthread_cond_wait
+                (
+                    pthread_cond_t *restrict cond,
+                    pthread_mutex_t *restrict mutex //锁
+                );
+               //看不见的操作// 
+                先阻塞进程
+                然后将已经上锁的mutex解锁，条件满足后，
+                该函数解除阻塞，然后对互斥锁加锁
+
+            4.限时等待一个条件变量:
+                int pthread_cond_timedwait
+                (
+                    pthread_cond_t *restrict cond,
+                    pthread_mutex_t *restrict mutex,
+                    const struct timespec *restrict abstime
+                );
             
+            5.唤醒至少一个阻塞在条件变量上的进程
+                int pthread_cond_signal(pthread_cond_t *cond);
+
+            6.唤醒全部阻塞在条件变量上的线程
+                int pthread_cond_broadcast(pthread_cond_t *cond);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
