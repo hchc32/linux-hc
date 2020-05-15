@@ -24,10 +24,39 @@ void* meals(void* arg)
     }
     
     //争夺筷子　－－－　锁
-    while(pthread_mutex_lock(&mutex[i]) != 0)
+    while(1)
     {
+        sleep(1);
+        //拿到左手筷子
+        pthread_mutex_lock(&mutex[left]);
+        //尝试去抢右手的筷子
+        //抢不到右手的筷子
+        if(pthread_mutex_trylock(&mutex[right]) != 0)
+        {
+            pthread_mutex_unlock(&mutex[left]);
+            continue;
+        }
+        //抢到了右手的筷子
+        //printf("哲学家 %d 抢到了筷子　%d %d\n",i,left,right);
+        for(int j = 0; j < 5; j++)
+        {
+            if(j == i)
+            {
+                printf("=====哲学家 %d　正在吃饭\n",i);
+            }
+            else
+            {
+                printf("-----哲学家 %d  正在think!\n",j);
+            }
+        }
         
+        sleep(2);
+
+        //吃完饭释放筷子
+        pthread_mutex_unlock(&mutex[left]);
+        pthread_mutex_unlock(&mutex[right]);
     }
+    return NULL;
 }
 
 int main()
