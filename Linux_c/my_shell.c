@@ -7,6 +7,8 @@
 #include<sys/types.h>
 #include<fcntl.h>
 #include<wait.h>
+#include<signal.h>
+
 #define normal       0 //一般的输出命令
 #define out_redirect 1 //输出重定向
 #define in_redirect  2 //输入重定向
@@ -19,11 +21,19 @@ void do_cmd(int argcount ,char arglist[100][256]);
 
 int main(int argc ,char *argv[])
 {
+    sigset_t sig;
     int i;
     int argcount = 0;
     char *buf = NULL;
     char arglist[100][256];
+    //存放键盘输入的字符串
     buf = (char *)malloc(256);
+    
+    //屏蔽信号ctrl+c
+    sigemptyset(&sig);
+    sigaddset(&sig,SIGINT);
+    sigprocmask(SIG_BLOCK,&sig,NULL);
+    
     if(buf == NULL)
     {
         printf("malloc filed ! line : %d\n",__LINE__);
@@ -125,7 +135,15 @@ void do_cmd(int argcount ,char arglist[100][256])
         arg[i] = arglist[i];
     }
     arg[argcount] = NULL;
-
+    if(strcmp("cd",arg[0]) == 0)
+    {
+        if(chdir(arg[1]) < 0)
+        {
+            printf("cd error! %d\n",arg[1]);
+            exit(0);
+        }
+        return;
+    }
     //查看命令行是否有后台运行符
     for(int i = 0; i < argcount ; i++)
     {
@@ -377,3 +395,4 @@ int find_command (char *command)
     }
     return 0;
 }
+
