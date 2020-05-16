@@ -8,16 +8,23 @@
 #include<fcntl.h>
 #include<wait.h>
 #include<signal.h>
+#include<readline/readline.h>
+#include<readline/history.h>
 
 #define normal       0 //一般的输出命令
 #define out_redirect 1 //输出重定向
 #define in_redirect  2 //输入重定向
 #define have_pipe    3 //管道
+#define SHELL_COL    "\033[1;34m"
+
 void print_prompt();        
 void get_input(char *buf);  //获取输入的命令字符串
 void explain_input(char *buf, int *argcount , char arglist[100][256]); //解释命令字符串
 int find_command (char *command);   //寻找命令是否存在
 void do_cmd(int argcount ,char arglist[100][256]);
+int cd_command(char* arg[2]);   //cd命令
+void ShowHistory();             //history命令
+
 
 int main(int argc ,char *argv[])
 {
@@ -70,14 +77,27 @@ int main(int argc ,char *argv[])
 
 void print_prompt()
 {
-    printf("myshell$$ ");
+    char buf[256];
+    getcwd(buf,256);
+    printf("\001\033[1m\002");
+    printf("\033[34m");
+    printf("\n\001my_shell$$ %s\002",buf);
+    printf("\001\033[0m\002");
+    memset(buf,'\0',256);
 }
 
 void get_input(char *buf)
 {
+
     int len = 0;
-    int ch;
-    ch = getchar();
+    char ch = '\n';
+    char* str;
+    //不加字符串上下键寻找命令有问题
+    str = readline(" : ");
+    read_history("/tmp/my_histroy");
+    add_history(str);
+    write_history("/tmp/my_histroy");
+    /*
     while(ch != '\n' && len < 256)
     {
         buf[len++] = ch;
@@ -91,6 +111,9 @@ void get_input(char *buf)
     buf[len] = '\n';
     len++;
     buf[len] = '\0';
+    */
+    strcpy(buf,str);
+    free(str);
 }
 
 void explain_input(char *buf, int *argcount , char arglist[100][256])
@@ -135,13 +158,24 @@ void do_cmd(int argcount ,char arglist[100][256])
         arg[i] = arglist[i];
     }
     arg[argcount] = NULL;
-    if(strcmp("cd",arg[0]) == 0)
+ /*   if(strcmp("cd",arg[0]) == 0)
     {
         if(chdir(arg[1]) < 0)
         {
-            printf("cd error! %d\n",arg[1]);
+            printf("cd %s error!\n",arg[1]);
             exit(0);
         }
+        printf(" %s ",arg[1]);
+        return;
+    }
+    */
+    if( cd_command(arg) == 1)
+    {
+        return ;
+    }
+    if(strcmp(arg[0],"history") == 0)
+    {
+        ShowHistory();
         return;
     }
     //查看命令行是否有后台运行符
@@ -396,3 +430,28 @@ int find_command (char *command)
     return 0;
 }
 
+int cd_command(char* arg[2])
+{
+    if(strcmp(arg[0],"cd") == 0)
+    {
+        if(chdir(arg[1]) < 0)
+        {
+            printf("cd %s error! line: %d\n",arg[1],__LINE__);
+        }
+        printf("%s %s : ",arg[0],arg[1]);
+        return 1;
+    }
+    return 0; 
+}
+
+void ShowHistory()
+{
+    int i = 0;
+    HIST_ENTRY ** his;
+    his = history_list();
+    while(his[i] != NULL)
+    {
+        printf("%s\n", his[i]->line);
+        i++;
+    }
+}
