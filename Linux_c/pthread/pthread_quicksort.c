@@ -6,7 +6,7 @@
 #include<unistd.h>
 
 #define MAXNUM 1000000
-#define PTHNUM 2
+#define PTHNUM 6
 #define ARRNUM (MAXNUM/PTHNUM)
 int q[MAXNUM];
 int arry[MAXNUM];
@@ -38,7 +38,7 @@ void* pthread_work(void* args)
     int index = (int)args;
     quick_sort(index,index+ARRNUM);
     pthread_barrier_wait(&barr);
-    pthread_exit(NULL);
+   // pthread_exit(NULL);
 }
 
 void merge()
@@ -67,13 +67,18 @@ void merge()
 
 int main()
 {
+    pthread_t pth[PTHNUM];
     //给数组随机赋值
     for(int i = 0; i < MAXNUM ; i++)
     {
         q[i] = random();
     }
-    pthread_barrier_init(&barr,NULL,PTHNUM);
-    pthread_t pth[PTHNUM];
+    struct timeval start_time;
+    struct timeval end_time;
+    //开始计时
+    gettimeofday(&start_time,NULL);
+    //初始化栅栏
+    pthread_barrier_init(&barr,NULL,PTHNUM+1);
     //创建线程
     for(int i = 0; i < PTHNUM ; i++)
     {
@@ -82,8 +87,19 @@ int main()
     //等待所有线程在统一起跑线上
     pthread_barrier_wait(&barr);
     merge();
+    //计时结束
+    gettimeofday(&end_time,NULL);
+    
+    //计算时间 微秒
+    long long run_time = (end_time.tv_sec - start_time.tv_sec) * 1000000 \
+                         +(end_time.tv_usec - start_time.tv_usec);
+    //微秒输出
+    printf("pthread number = %d , quick sort run of time : %lld us \n",PTHNUM , run_time);
+    //毫秒输出
+    printf("pthread number = %d , quick sort run of time : %lld ms \n",PTHNUM , run_time/1000);
 
-    /*
+    pthread_barrier_destroy(&barr);
+/*    
     //回收线程
     for(int i = 0; i < PTHNUM ; i++)
     {
