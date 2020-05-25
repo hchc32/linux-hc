@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include<stdlib.h>
 //栈的数据结点
 typedef struct StackNode
@@ -122,4 +123,3 @@ int Pop(LinkStack *head , int *pop_data)
     head->size_stack --;
     return 1;
 }
-

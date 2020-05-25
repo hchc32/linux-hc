@@ -57,7 +57,6 @@ void* customer(void* arg)
             //该函数会对互斥锁解锁
             pthread_cond_wait(&cond,&mutex);
             //解除阻塞之后，对互斥锁进行加锁操作
-            
         }
         //链表不为空,删除一个结点
         Node* pdel = head;
