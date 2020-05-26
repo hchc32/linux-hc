@@ -1,8 +1,8 @@
-//创建无向网图邻接矩阵
+//创建无向网图
 #include <stdio.h>
 #include<stdlib.h>
 
-//定点类型
+//顶点类型
 typedef char VertexType;
 //边上的权值类型
 typedef int EdgeType;
@@ -27,7 +27,9 @@ void creatMGraph(MGraph *G)
     scanf("%d%d",&G->numVertexes,&G->numEdges);
     for(int i = 0; i < G->numVertexes; i++)
     {
+        printf("请输入顶点信息:\n");
         scanf("%c",&G->vexs[i]);
+        getchar();
     }
     for(int i = 0; i < G->numVertexes; i++)
     {
