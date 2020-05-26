@@ -3,6 +3,7 @@
 #include<pthread.h>
 #include<stdlib.h>
 #include<semaphore.h>
+
 sem_t produce_sem;
 sem_t custom_sem;
 
@@ -24,7 +25,6 @@ void* produce(void* arg)
         pnew->next = head;
         head = pnew;
         printf("====== 生产者:%lu, %d\n",pthread_self(),pnew->data);
-        
         sem_post(&custom_sem);
         sleep(rand()%3);
     }

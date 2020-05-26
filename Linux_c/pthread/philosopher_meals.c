@@ -22,7 +22,7 @@ void* meals(void* arg)
         left = i + 1;
         right = i;
     }
-    
+
     //争夺筷子　－－－　锁
     while(1)
     {
