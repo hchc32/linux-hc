@@ -1,3 +1,4 @@
+//仅当哲学家的左右筷子均可用时,才允许吃饭,否则思考
 #include<stdio.h>
 #include<unistd.h>
 #include<pthread.h>

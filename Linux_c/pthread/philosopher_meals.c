@@ -1,3 +1,4 @@
+//4个哲学家同时去拿左边的筷子，然后再拿右边的筷子，防止振荡
 #include <stdio.h>
 #include<unistd.h>
 #include<pthread.h>
