@@ -67,6 +67,8 @@ void DeBug_Test(void *number)
 //ThreadCallBackFun
  void * ThreadCallBackFun(void *arg)
 {
+        
+    //printf("%lu\n",pthread_self());  
     struct WORKER *worker = (struct WORKER*)arg;
     
     //两种状态:等待和工作
@@ -126,7 +128,7 @@ int ThreadPoolCreat(ThreadPool *pool , int numWorks)
             free(worker);
             return -1;
         }
-        
+
         //将创建的线程加入到执行队列中
         LL_ADD(pool->works,worker);
     }
@@ -161,8 +163,8 @@ int main()
 {
     struct JOB jobs;
     ThreadPool pool;
-    ThreadPoolCreat(&pool,11);
-    for(int i = 0; i < 10; i++)
+    ThreadPoolCreat(&pool,100);
+    for(int i = 0; i < 2; i++)
     {
         jobs.fun = DeBug_Test;
         jobs.user_data = (void*)i;
