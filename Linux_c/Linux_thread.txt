@@ -324,7 +324,7 @@ number.
 
             6.解锁
                 sem_post(sem_t* sem);
-                    对sem做了++操作
+                    对value做了++操作
 
 
 

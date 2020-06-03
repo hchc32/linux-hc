@@ -47,7 +47,7 @@ void* produce(void* arg)
             sem_post(&sem[i]);
             //释放盘子
             sem_post(&plate);
-            sleep(rand() % 2);
+            sleep(1);
         }
     }
 }
@@ -58,7 +58,7 @@ void* customer(void* arg)
     int i = (int)arg;
     while(1)
     {
-        sleep(1);
+       sleep(1);
         Node *pdel = NULL,*lpdel = NULL;
         if(sem_wait(&plate) < 0) continue;
         else
@@ -94,7 +94,7 @@ void* customer(void* arg)
             free(pdel);
             sem_post(&plate);
         }
-        //sleep(rand() % 3);
+        sleep(rand() % 3);
     }
 }
 
@@ -102,10 +102,10 @@ int main()
 {
     //定义线程变量
     pthread_t pth_produce[NUM],pth_customer[NUM];
-    sem_init(&plate,0,2);
+    sem_init(&plate,0,1);
     for(int i = 0; i < NUM; i++)
     {
-        sem_init(&sem[i],0,2);
+        sem_init(&sem[i],0,0);
     }
     //创建生产者线程,创建消费者线程
     for(int i = 0; i < NUM; i++)

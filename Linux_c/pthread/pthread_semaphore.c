@@ -48,7 +48,7 @@ void* custom(void* arg)
 int main()    
 {
     pthread_t p1,p2;
-    sem_init(&produce_sem,0,2);
+    sem_init(&produce_sem,0,3);
     sem_init(&custom_sem,0,0);
     pthread_create(&p1,NULL,produce,NULL);
     pthread_create(&p2,NULL,custom,NULL);
