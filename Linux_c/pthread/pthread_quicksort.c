@@ -99,13 +99,13 @@ int main()
     printf("pthread number = %d , quick sort run of time : %lld ms \n",PTHNUM , run_time/1000);
 
     pthread_barrier_destroy(&barr);
-/*    
+
     //回收线程
     for(int i = 0; i < PTHNUM ; i++)
     {
         pthread_join(pth[i],NULL);
     }
-    */
+    
     return 0;
 }
 

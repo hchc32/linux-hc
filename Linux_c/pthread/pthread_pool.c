@@ -59,22 +59,21 @@ struct MANAGER
 typedef struct MANAGER ThreadPool;
 
 //DeBug_Test
-void DeBug_Test(void *number)
+void DeBug_Test(void* arg)
 {
-    int num = (int)number;
+    int num = (int)arg;
     printf("%d\n",num);
 }
 //ThreadCallBackFun
- void * ThreadCallBackFun(void *arg)
-{
-        
+static void * ThreadCallBackFun(void *arg)
+{  
     //printf("%lu\n",pthread_self());  
     struct WORKER *worker = (struct WORKER*)arg;
     
     //两种状态:等待和工作
     while(1)
     {
-
+        //pthread_mutex_lock(&worker->pool->jobs_mutex);
         while(worker->pool->jobs == NULL)
         {
             if(worker->terminate) break;
@@ -89,12 +88,10 @@ void DeBug_Test(void *number)
         struct JOB *job = worker->pool->jobs;
         //从任务队列中删除
         LL_DELETE(worker->pool->jobs,job);
-        /*
-        job->fun = DeBug_Test;        
-        */
         job->fun(job->user_data);
         pthread_mutex_unlock(&worker->pool->jobs_mutex);
     }
+    //if( worker->terminate ) pthread_mutex_unlock(&worker->pool->jobs_mutex);
     free(worker);
     pthread_exit(NULL);
 }
@@ -152,24 +149,34 @@ int ThreadPoolDestroy(ThreadPool *pool)
 //往线程池中抛任务
 void ThreadPoolPush(ThreadPool *pool , struct JOB *job)
 {
+ //   int num = (int)job->user_data ;
+ //   printf("push %d!\n",num);
     pthread_mutex_lock(&pool->jobs_mutex);
     LL_ADD(pool->jobs,job);
-    //唤醒wait
     pthread_cond_signal(&pool->jobs_cond);
+    //唤醒wait
     pthread_mutex_unlock(&pool->jobs_mutex);
 }
 
 int main()
 {
-    struct JOB jobs;
     ThreadPool pool;
     ThreadPoolCreat(&pool,100);
-    for(int i = 0; i < 2; i++)
+    /*
+    for(int i = 0; i < 100; i++)
     {
+        printf("%lu\n",pool.works->thread);
+        pool.works = pool.works->next;
+    }
+    */
+    for(int i = 0; i < 20 ; i++)
+    {
+        struct JOB jobs;
         jobs.fun = DeBug_Test;
         jobs.user_data = (void*)i;
         ThreadPoolPush(&pool,&jobs);
     }
+
     ThreadPoolDestroy(&pool);
     return 0;
 }
