@@ -42,7 +42,7 @@ void* philosopher(void* arg)
     int i = (int)arg;
     //改变随机数的种子
     srand(time(NULL));
-   // while(1)
+    while(1)
     {
         sleep(rand()%2);
         //拿筷子

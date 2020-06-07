@@ -256,8 +256,10 @@ void display_a(char *filename,char *pathname)
     strcpy(temp,pathname);
     strcat(temp,"/");
     strcat(temp,filename);
+    printf("\n&&&&&%s\n",temp);
     if(stat(temp,&file) == -1)
     {
+        perror("stat");
         printf("stat error!line : %d\n",__LINE__);
     }
     //文件的属性
