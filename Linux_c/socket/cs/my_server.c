@@ -8,10 +8,12 @@
 #include<errno.h>
 #include"my_recv.h"
 #include<linux/socket.h>
+#include<unistd.h>
 
 #define SERV_PORT 4507 /*服务器的端口*/
 #define LISTENQ   12   /*连接请求队列的最大长度*/
-
+#define USERNAME  0
+#define PASSWORD  1
 /*保存用户名和密码的结构体*/
 struct usersinfo
 {
@@ -64,13 +66,16 @@ void send_data(int conn_fd,const char *string)
     }
 }
 
-
-
 int main()
 {
     int socker_fd;                 
     int option_value;
     int conn_fd;
+    int pid;
+    int ret;
+    int name_num;
+    int flag_recv = USERNAME;
+    char recv_buf[128];
     struct sockaddr_in client_addr,server_addr;
     socklen_t cli_len;
     
@@ -110,6 +115,7 @@ int main()
     cli_len = sizeof(struct sockaddr_in);
     while(1)
     {
+
         //通过accept接受客户端的连接请求，并返回连接套接字用于收发数据
         conn_fd = accept(socker_fd,(struct sockaddr*)&client_addr,&cli_len);
         if(conn_fd < 0)
@@ -118,15 +124,72 @@ int main()
         }
         printf("accept a new client, ip:%s\n",inet_ntoa(client_addr.sin_addr));
 
-        
+        /*创建一个子进程处理刚刚接收的连接请求*/
+        if((pid = fork()) == 0)
+        {
+            while(1)
+            {
+                if((ret = recv(socker_fd,recv_buf,sizeof(recv_buf),0)) < 0)
+                {
+                    my_err("recv",__LINE__);
+                }
+                recv_buf[ret - 1] = '\0';
+
+                /*如果接收到的是用户名*/
+                if(flag_recv == USERNAME)
+                {
+                    name_num = find_name(recv_buf);
+                    switch(name_num)
+                    {
+                        case -1:
+                            {
+                                send_data(conn_fd,"n\n");
+                                break;
+                            }
+                        case -2:
+                            {
+                                exit(1);
+                                break;
+                            }
+                        default:
+                            {
+                                send_data(conn_fd,"y\n");
+                                flag_recv = PASSWORD;
+                                break;
+                            }
+                    }
+                }
+
+                /*如果接受到是密码*/
+                else if(flag_recv == PASSWORD)
+                {
+                    if(strcmp(users[name_num].password,recv_buf) == 0)
+                    {
+                        send_data(conn_fd,"y\n");
+                        send_data(conn_fd,"Welcome login my tcp server\n");
+                        printf("%slogin\n",users[name_num].username);
+                        /*跳出while循环*/
+                        break;
+                    }
+                    else
+                    {
+                        send_data(conn_fd,"n\n");
+                    }
+                }
+
+            }
+            close(socker_fd);
+            close(conn_fd);
+            /*结束子进程*/
+            exit(0);
+        }
+
+        /*父进程关闭接收的连接请求,执行accept等待其他连接请求*/
+        else
+        {
+            close(conn_fd);
+        }
     }
-
-
-    /*读取客户端数据*/
-
-    /*向客户端写数据*/
-
-    /*关闭连接*/
     return 0;
 }
 
