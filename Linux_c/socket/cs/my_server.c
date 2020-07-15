@@ -25,6 +25,7 @@ struct usersinfo
 struct usersinfo users[] = 
 {
     {"linux","unix"},
+    {"1","1"},
     {" "," "}
 };
 
@@ -45,6 +46,7 @@ int find_name(const char* name)
     {
         if(strcmp(name,users[i].username) == 0)
         {
+    //        printf("%s\n",users[i].username);
             return i;
         }
     }
@@ -129,9 +131,10 @@ int main()
         {
             while(1)
             {
-                if((ret = recv(socker_fd,recv_buf,sizeof(recv_buf),0)) < 0)
+                if((ret = recv(conn_fd,recv_buf,sizeof(recv_buf),0)) < 0)
                 {
                     my_err("recv",__LINE__);
+                    exit(1);
                 }
                 recv_buf[ret - 1] = '\0';
 
@@ -143,7 +146,7 @@ int main()
                     {
                         case -1:
                             {
-                                send_data(conn_fd,"n\n");
+                                send_data(conn_fd,"y\n");
                                 break;
                             }
                         case -2:
