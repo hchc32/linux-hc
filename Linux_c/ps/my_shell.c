@@ -242,6 +242,7 @@ void do_cmd(int argcount ,char arglist[100][256])
             {
                 file = arg[i+1];
                 arg[i] == NULL;
+                printf("%s\n",file);
             }
         }
     }

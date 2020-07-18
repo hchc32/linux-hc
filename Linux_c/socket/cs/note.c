@@ -27,3 +27,18 @@ struct sockaddr_in
     struct in_addr       sin_addr;   /*IP地址*/
     unsigned char        sin_zero[8];/*填充字节,一般赋值为0*/
 };
+
+
+struct epoll_event
+{
+    __unit32_t events; //epoll事件
+    epoll_data_t data; //用户数据
+}
+
+typedef union epoll_data
+{
+     void* ptr;              //指定与fd相关的用户数据
+     int fd;                 //指定事件所从属的目标文件描述符
+     uint32_t u32;
+     uint64_t u64;
+} epoll_data_t;

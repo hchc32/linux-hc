@@ -77,7 +77,70 @@ Linux网络编程
 
 
 
+6.epoll--红黑树　　poll--线性表
+
+    1.该函数生成一个epoll专用的文件描述符
+        int epoll_creat(int size);
+            size:epoll上能关注的最大描述符个数,
+    
+    2.用于控制某个epoll文件描述符事件,可以注册,修改,删除
+        int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+            epfd:epoll_creat生成的epoll专用描述符
+            op: EPOLL_CTL_ADD -- 注册
+                EPOLL_CTL_MOD -- 修改
+                EPOLL_CTL_DEL -- 删除
+            fd:关联的文件描述符
+            event:告诉内核要监听什么事件
+        struct epoll_event
+        {
+            __unit32_t events; //epoll事件
+            epoll_data_t data; //用户数据
+        }
+ 
+        //共用体
+        typedef union epoll_data
+        {
+                void* ptr;              //指定与fd相关的用户数据
+                int fd;                 //指定事件所从属的目标文件描述符
+                uint32_t u32;
+                uint64_t u64;
+        } epoll_data_t;
 
 
+    3.等待IO事件发生 - 可以设置阻塞的函数
+        int epoll_wait(int epfd, struct epoll_event *events,
+                        int maxevents, int timeout);
+            epfd:要检测的句柄
+            events:结构体数组的地址（传出参数）
+            maxevents:events数组的大小
+            timeout:设置等待的时间
+                        -1 永久阻塞
+                        0  立即返回
+                        >0 
 
+7.epoll的三种工作模式
+    1.水平触发模式
+        只要fd对应的读缓冲区有数据
+        epoll_wait就返回，并且返回的次数与发送的数据次数没有关系
+        epoll默认的工作模式
 
+    2.边沿触发模式--ET
+        客户端给server发数据
+            发一次数据server的epoll_wait返回一次
+            
+            不在乎数据是否读完
+
+    3.边沿非阻塞触发模式
+        效率最高
+            如何设置非阻塞？
+                1.设置flags open()时设置非阻塞
+                
+                2.fcntl来设置非阻塞
+                
+
+8.文件描述符号突破1024限制
+    1.select　－　突破不了，需要编译内核
+        通过数组实现的
+    2.poll和epoll都可以突破１０２４限制
+        poll内部链表
+        epoll红黑树
