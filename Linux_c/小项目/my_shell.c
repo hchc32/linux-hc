@@ -153,6 +153,7 @@ void do_cmd(int argcount ,char arglist[100][256])
     char *file;                //存储特殊符号后的字符
     char *argnext[argcount+1];
     //将命令取出
+    printf("argcount%d\n",argcount);
     for(int i  = 0; i < argcount ; i++)
     {
         arg[i] = arglist[i];
@@ -280,6 +281,7 @@ void do_cmd(int argcount ,char arglist[100][256])
     if(pid < 0)
     {
         printf("fork error ! line : %d\n",__LINE__);
+        return ;
     }
     switch(how)
     {
@@ -305,6 +307,7 @@ void do_cmd(int argcount ,char arglist[100][256])
             int fd;
             if(pid == 0)
             {
+                arg[1] = NULL;
                 if(!find_command(arg[0]))
                 {
                     printf("%s : command not found ! \n line : %d\n",arg[0],__LINE__);
@@ -360,27 +363,29 @@ void do_cmd(int argcount ,char arglist[100][256])
                     execvp(arg[0],arg);
                     exit(0);
                 }
-
-                //父进程逻辑
-                int status2;
-                if( waitpid(pid2 , &status2 , 0) == -1 )
+                else
                 {
-                    printf("wait for child process error! line : %d\n",__LINE__);
-                }
-                if( !(find_command(argnext[0])) )
-                {
-                    printf("%s : command not found ! \n line : %d\n",argnext[0],__LINE__);
+                    //父进程逻辑
+                    int status2;
+                    if( waitpid(pid2 , &status2 , 0) == -1 )
+                    {
+                        printf("wait for child process error! line : %d\n",__LINE__);
+                    }
+                    if( !(find_command(argnext[0])) )
+                    {
+                        printf("%s : command not found ! \n line : %d\n",argnext[0],__LINE__);
+                        exit(0);
+                    }
+                    fd2 = open("/tmp/youdonotknowfile",O_RDONLY);
+                    dup2(fd2,0);
+                    execvp(argnext[0],argnext);
+                    //删除文件
+                    if(remove("/tmp/youdonotknowfile"))
+                    {
+                        printf("remove file error ! line : %d\n",__LINE__);  
+                    }
                     exit(0);
                 }
-                fd2 = open("/tmp/youdonotknowfile",O_RDONLY);
-                dup2(fd2,0);
-                execvp(argnext[0],argnext);
-                //删除文件
-                if(remove("/tmp/youdonotknowfile"))
-                {
-                    printf("remove file error ! line : %d\n",__LINE__);  
-                }
-                exit(0);
             }
             break;
         }
@@ -405,7 +410,7 @@ int find_command (char *command)
 {
     DIR* dp;
     struct dirent* dirp;
-    char* path[] = {"./", "/bin", "/usr/bin", NULL};
+    char* path[] = {"./", "/bin", "/usr/bin","/usr/local/bin","/usr/sbin",NULL};
     //当前目录下的命令也可以运行
     if(strncmp(command,"./",2) == 0)
     {

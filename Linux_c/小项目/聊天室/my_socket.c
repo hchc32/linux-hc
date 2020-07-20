@@ -97,7 +97,20 @@ int my_recv(int conn_fd,char *data_buf,int len)
 */ 
 int my_send(int conn_fd,char *data_buf,int len)
 {
+    int i;
     char buf[BUF_SIZE];
     char *pread;
-    if((send()))
+    pread = data_buf;
+    for( i = 0 ; i < len ; i++)
+    {
+        buf[i] = *pread++;
+    }
+    buf[i] = '\0';
+    if((send(conn_fd,buf,len,0)) < 0)
+    {
+        my_err("send",__LINE__);
+        return -1;
+    }
+    return len;
+
 }

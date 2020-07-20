@@ -23,7 +23,7 @@
 #define PARAMA 1
 #define PARAML 2
 #define PARAMR 4
-char *filename[50000];                          //记录目录下文件和子目录的名称
+char *filename[5000000];                        //记录目录下文件和子目录的名称
 char pathname[50][50];                          //目录与文件名称
 int count;                                      //记录目录下的文件和子目录的个数
 int maxlen;                                     //记录目录下最长的文件名
@@ -32,9 +32,10 @@ int leave_len = MAXLEN;                         //记录每行剩余的长度
 void  getdir_name(char dir_name[]);             //获得目录下文件和子目录名称的函数
 void quick_sort(char *filename1[],int l,int r); //名称排序
 void display_a(char *filename,char *pathname);  //-a
-void print_filedata(char *filename);            //-l
+void print_filedata(char *pathname,char *filename); //-l
 void Signal_Bye_Ctrlc();                        //屏蔽ctrl + c
 void display_dir(int flag,char*name);           //-R
+void get_total(char *dirname);                  //获取总用量 
 
 int main(int argc,char *argv[])
 {
@@ -54,8 +55,8 @@ int main(int argc,char *argv[])
             {
                 param[j] = argv[i][k];
                 j++;
+                param_count++;
             }
-            param_count++;
         }
     }
     //解析ls -后面的参数
@@ -136,10 +137,11 @@ int main(int argc,char *argv[])
                                }
                                getdir_name(pathname[i]);
                                quick_sort(filename,0,count-1);
+                               get_total(pathname[i]);
                                for(int j = 0; j < count ;j++)
                                {
                                    if(strcmp(filename[j],".") != 0 && strcmp(filename[j],"..") != 0)
-                                        print_filedata(filename[j]);
+                                        print_filedata(pathname[i],filename[j]);
                                }
                                break;
 
@@ -151,9 +153,10 @@ int main(int argc,char *argv[])
                                }
                                getdir_name(pathname[i]);
                                quick_sort(filename,0,count-1);
+                               get_total(pathname[i]);
                                for(int j = 0; j < count ;j++)
                                {
-                                    print_filedata(filename[j]);
+                                    print_filedata(pathname[i],filename[j]);
                                }
                                break;
                            }
@@ -169,10 +172,20 @@ int main(int argc,char *argv[])
                                 break;
                            }
                     case 4:{//-R
-                            //   getdir_allname(pathname[i]);
-                              display_dir(4,"/");
+                              display_dir(param_flag,pathname[i]);
                                break;
-                            
+                           }
+                    case 5:{
+                              display_dir(param_flag,pathname[i]);
+                               break;
+                           }
+                    case 6:{
+                              display_dir(param_flag,pathname[i]);
+                               break;
+                           }
+                    case 7:{
+                              display_dir(param_flag,pathname[i]);
+                               break;
                            }
                 }
                 
@@ -180,7 +193,7 @@ int main(int argc,char *argv[])
             else
             {
                 memset(pathname,'.',sizeof(pathname));
-               print_filedata(pathname[i]);
+               print_filedata("\0",pathname[i]);
             }
         }
         else
@@ -285,11 +298,12 @@ void display_a(char *filename,char *pathname)
     leave_len -=  len+2;
 }
 
-void print_filedata(char *filename)
+void print_filedata(char *pathname,char *filename)
 {
     struct stat file ;
+    char statname[1000];
+    memset(statname,'\0',sizeof(statname));
     //构造pathname /filename
-    char statname[50];
     memset(statname,'\0',sizeof(statname));
     //strcpy(statname,"/");
     strcpy(statname,(const char*)pathname);
@@ -297,7 +311,9 @@ void print_filedata(char *filename)
     strcat(statname,filename);
     if(stat(statname,&file) == -1)
     {
+        return;
         printf("stat error!line : %d\n",__LINE__);
+        
     }
     char str_mode[11];
     memset(str_mode,'-',sizeof(str_mode));
@@ -339,16 +355,16 @@ void display_dir(int flag,char*name)
     struct dirent  *ptr;
     int i,count1 = 0;
     struct stat buf;
-    char name_dir[10000];
-    if(chdir(name)<0)                              //将输入的目录改为当前目录，下面操作的前提
+    char name_dir[1000];
+    chdir(name);       //将输入的目录改为当前目录
+    if(getcwd(name_dir,1000)<0)
     {
-
-    }
-    if(getcwd(name_dir,10000)<0)
-    {
-
+        printf("getcwd error!line:%d\n",__LINE__);
+        return;
     }
     printf("%s:\n",name_dir);
+    if(flag & PARAML)
+        get_total(name_dir);
     dir = opendir(name_dir);     //用新获得的路径打开目录
     if(dir==NULL)
     {
@@ -377,8 +393,19 @@ void display_dir(int flag,char*name)
         {
             printf("readdir error! line:%d",__LINE__);
         }
-        if(strcmp(ptr->d_name,"..") != 0 && strcmp(ptr->d_name,".") != 0)
+        //alR
+        if(flag == 7)
+            print_filedata(name_dir,ptr->d_name);
+        if(flag == 5)
             printf("%s ",ptr->d_name);
+        if(flag == 6)
+            if(strcmp(".",ptr->d_name) != 0 && strcmp("..",ptr->d_name) != 0)
+                print_filedata(name_dir,ptr->d_name);
+        if(flag == 4)
+        {
+            if(strcmp(".",ptr->d_name) != 0 && strcmp("..",ptr->d_name) != 0)
+                printf("%s ",ptr->d_name);
+        }
         printf("\n");
         strcat(filenames[i],ptr->d_name);    //这里要注意用之前的初始化
     }
@@ -425,4 +452,28 @@ void Signal_Bye_Ctrlc()
     sigaddset(&Bye,SIGINT);//在set信号集中加入ctrl + c
     sigprocmask(SIG_BLOCK,&Bye,NULL);
 
+}
+
+void get_total(char *dirname)
+{
+    int total = 0;
+    DIR *dir = opendir(dirname);
+    struct dirent *dirp;
+    struct stat buf;
+    while((dirp = readdir(dir)) != NULL)
+    {
+        lstat(dirp->d_name,&buf);
+        int temp = buf.st_size / 4096;
+        if(S_ISLNK(buf.st_mode))
+        {
+            temp = 0;
+        }
+        if(buf.st_size % 4096 > 0)
+        {
+            temp ++;
+        }
+        total += temp;
+    }
+    closedir(dir);
+    printf("总用量%d\n",total);
 }
