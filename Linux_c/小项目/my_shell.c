@@ -153,7 +153,7 @@ void do_cmd(int argcount ,char arglist[100][256])
     char *file;                //存储特殊符号后的字符
     char *argnext[argcount+1];
     //将命令取出
-    printf("argcount%d\n",argcount);
+   // printf("argcount%d\n",argcount);
     for(int i  = 0; i < argcount ; i++)
     {
         arg[i] = arglist[i];

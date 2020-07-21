@@ -9,7 +9,6 @@
 
 #define SERV_PORT 4507
 #define LISTEN_NUM 2000
-#define BUF_SIZE 1024
 
 
 /*
@@ -59,10 +58,9 @@ int get_lfd(void)
  *             buf -- 存储接受的数据的缓冲区
  *                len -- 缓冲区的大小
  *返回值:成功返回接收到的字数,客户端断开连接返回0,失败返回-1
-*/ 
-int my_recv(int conn_fd,char *data_buf,int len)
+int my_recv(int conn_fd,void *data_buf,int len)
 {
-    char buf[BUF_SIZE];
+    char buf[BUFSIZE];
     char *pread;
     int recv_len = 0;
 
@@ -86,7 +84,7 @@ int my_recv(int conn_fd,char *data_buf,int len)
     }
     return recv_len;
 }
-
+*/
 /*
  *函数名:my_send
  *描述  :
@@ -94,11 +92,10 @@ int my_recv(int conn_fd,char *data_buf,int len)
  *          data_buf --　发送数据的内容
  *                 len -- 发送数据的大小 
  *返回值:成功返回0,失败返回-1.
-*/ 
-int my_send(int conn_fd,char *data_buf,int len)
+int my_send(int conn_fd,void *data_buf,int len)
 {
     int i;
-    char buf[BUF_SIZE];
+    char buf[BUFSIZE];
     char *pread;
     pread = data_buf;
     for( i = 0 ; i < len ; i++)
@@ -114,3 +111,4 @@ int my_send(int conn_fd,char *data_buf,int len)
     return len;
 
 }
+*/

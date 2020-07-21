@@ -2,7 +2,10 @@
 #include<stdlib.h>
 #include<string.h>
 #include<mysql/mysql.h>
+#include<sys/socket.h>
 #include"mysql.c"
+#include"my_socket.h"
+#include"user_password.h"
 
 /*
  *函数名:get_user_pass
@@ -10,35 +13,15 @@
  *参数  :对应的数据库
  *返回值:void
 */
-void get_user_pass(MYSQL *mysql)
+int JoinMysql(MYSQL *mysql, regist *info)
 {
-    char user[10];
-    char user_name[20];
-    char password[20];
-    char birthday[10];
-    char temp[1024];
-
-    memset(user,'\0',sizeof(user));
-    memset(user_name,'\0',sizeof(user_name));
-    printf("请输入你要注册的帐号昵称:\n");
-    scanf("%s",user_name);
-
-    do
-    {
-        printf("请输入你的密码(不小于7位字符):\n");
-        scanf("%s",password);
-    }
-    while(strlen(password) < 7);
-    
-    printf("密保问题:\n");
-    printf("你的生日是多少?(XXXX-XX-XX)\n:");
-    scanf("%s",birthday);
+    char temp[100];
     //查询帐号密码表中最后一个帐号
     //打开数据库
     if(connect_mysql(mysql) < 0)
     {
         my_err("connect_mysql",__LINE__);
-        return ;
+        return -1;
     }
     mysql_query(mysql,"use try");
     //获得表中所有数据
@@ -52,23 +35,90 @@ void get_user_pass(MYSQL *mysql)
     MYSQL_ROW row ;
     while((row = mysql_fetch_row(result)))
     {
-        strcpy(user,row[0]);
+        strcpy(info->accounts,row[0]);
     }
-    int change = atoi(user);
+    int change = atoi(info->accounts);
     change++ ;
-    sprintf(user,"%d",change);
+    sprintf(info->accounts,"%d",change);
 
     //将帐号和密码存入表中
-    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",user,user_name,password,birthday);
+    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",info->accounts,info->user_name,info->password,info->birthday);
     mysql_query(mysql,temp);
 
     //关闭数据库
     close_mysql(mysql);
-    printf("你的帐号为:%s\n",user);
-    printf("请牢记你的帐号和密码.\n");
-    printf("注册成功!\n");
+    return 1;
 }
 
+/*
+ *函数名:get_userinfo
+ *描述  :获取用户输入存入到buf中,用户输入的标志以'\n'为结束标志
+ *参数  :buf --- 存储用户输入的空间
+ *         len --- buf的长度
+ *返回值:buf为NULL返回-1,否则返回0
+*/
+int get_userinfo(char *buf,int len)
+{
+    int i = 0;
+    int c;
+    if(buf == NULL)
+    {
+        return -1;
+    }
+    while((c = getchar() != '\n' && (c != EOF) && i < len-2))
+    {
+        buf[i++] = c;
+    }
+    buf[i++] = '\n';
+    buf[i++] = '\0';
+
+    return 0;
+}
+
+/*
+ *函数名:input_userinfo
+ *描述　:输入用户名，然后通过fd发送出去
+ *参数  :conn_fd --- 目标fd
+ *         string --- 用户名
+ *返回值:无
+*/
+void input_userinfo(int conn_fd,const char *string)
+{
+    char input_buf[20];
+    char recv_buf[BUFSIZE];
+    int flag_userinfo;
+    //输入用户信息直到正确为止
+    do
+    {
+        printf("%s:",string);
+        if(get_userinfo(input_buf,20) < 0 )
+        {
+            printf("get_userinfo error! line:%d",__LINE__);
+            exit(1);
+        }
+
+        if(send(conn_fd,input_buf,strlen(input_buf),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+
+        //从连接套接字上读取一次数据
+        if(recv(conn_fd,recv_buf,sizeof(recv_buf),0) < 0)
+        {
+            printf("my_recv error! line:%d",__LINE__);
+            exit(1);
+        }
+        if(recv_buf[0] == VALID_USERINFO)                       
+        {
+            flag_userinfo = VALID_USERINFO;
+        }
+        else
+        {
+            printf("%s error,input again",string);
+            flag_userinfo = INVALID_USERINFO;
+        }
+    }while(flag_userinfo == INVALID_USERINFO);
+}
 
 
 
