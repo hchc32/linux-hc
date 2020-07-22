@@ -24,6 +24,7 @@ typedef struct Sock
 }Sock;
 MYSQL mysql;
 pthread_mutex_t mutex;
+pthread_mutex_t mysql_mutex;
 
 
 //注册线程函数
@@ -37,7 +38,9 @@ void* registers(void* arg)
         my_err("recv",__LINE__);
         pthread_exit(NULL);
     }
-
+    
+    //数据库操作加锁
+    pthread_mutex_lock(&mysql_mutex);
     //然后将数据存放到数据库中
     if(connect_mysql(&mysql) < 0)
     {
@@ -66,7 +69,10 @@ void* registers(void* arg)
     sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",\
             temp_buf.accounts,temp_buf.user_name,temp_buf.password,temp_buf.birthday);
     mysql_query(&mysql,temp);
-    close_mysql(&mysql);                                                               
+    close_mysql(&mysql);               
+
+    //数据库操作解锁
+    pthread_mutex_unlock(&mysql_mutex);
     //然后向客户端发送帐号                                     
     char temp_account[10];
     if(send(info->fd,temp_account,sizeof(temp_account),0) < 0)
@@ -81,29 +87,145 @@ void* registers(void* arg)
 void *sign_in(void *arg)
 {
     Sock *info = (Sock*)arg;
-
-    //连接的套接字
-    info->fd 
+    
     //接受用户的帐号
+    char temp_buf[20];
+    memset(temp_buf,'\0',sizeof(temp_buf));
+    
+    //数据库操作加锁
+    pthread_mutex_lock(&mysql_mutex);
+    
+    //连接数据库
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__);
+        //pthread_exit(NULL);
+    }
+    
+    //接收客户端发的帐号
+    if(recv(info->fd,temp_buf,sizeof(temp_buf),0) < 0)
+    {
+        my_err("recv",__LINE__);
+       // pthread_exit(NULL);
+    }
+
+    //帐号 昵称 密码 在现状态
     //判断帐号是否存在
-        //存在则再读取密码
-            //密码不正确返回n
-            //存在返回y
-        //否则返回n
-    //登录成功时候还要改变数据库中该帐号对应的状态
+    mysql_query(&mysql,"use try");
+    char mysql_temp[50];
+    memset(mysql_temp,'\0',sizeof(mysql_temp));
+    sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf);
+   
+    //帐号不存在
+    if(mysql_query(&mysql,mysql_temp) < 0) 
+    {
+        if(send(info->fd,"n",sizeof("n"),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+    }
+    else
+    {
+        char temp_buf1[20];
+        memset(temp_buf1,'\0',sizeof(temp_buf1));
+        if(recv(info->fd,temp_buf1,sizeof(temp_buf1),0) < 0)
+        {
+            my_err("recv",__LINE__);
+           // pthread_exit(NULL);
+        }
+        //获得表中所有数据
+        memset(mysql_temp,'\0',sizeof(mysql_temp));
+        sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s and 密码='%s'",temp_buf,temp_buf1);
+        if(mysql_query(&mysql,mysql_temp) < 0)
+        {
+            if(send(info->fd,"n",sizeof("n"),0) < 0)
+            {
+                my_err("send",__LINE__);
+            }
+        }
+        else
+        {
+             if(send(info->fd,"y",sizeof("y"),0) < 0)
+             {
+                my_err("send",__LINE__);
+             }
+
+            //登录成功时候还要改变数据库中该帐号对应的状态
+            memset(mysql_temp,'\0',sizeof(mysql_temp));
+            sprintf(mysql_temp,"update 帐号密码 set flag = 1 where 帐号 = '%s'",temp_buf);
+            if(mysql_query(&mysql,mysql_temp) < 0)
+            {
+                my_err("mysql_query",__LINE__);
+            }
+            
+        }
+    }
+    //关闭数据库
+    close_mysql(&mysql);
+    //数据库操作解锁
+    pthread_mutex_unlock(&mysql_mutex);
     
 }
 
 //找回密码线程函数
 void *find_password(void *arg)
 {
+    Sock *info = (Sock*)arg;
+    char temp_buf[10];
+    memset(temp_buf,'\0',sizeof(temp_buf));
+    if(recv(info->fd,temp_buf,sizeof(temp_buf),0) < 0)
+    {
+        my_err("recv",__LINE__);
+    }
+    
+        mysql_query(&mysql,"use try");
+    char mysql_temp[50];
+    memset(mysql_temp,'\0',sizeof(mysql_temp));
+    sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf); 
+
+    //如果帐号不存在
+    if(mysql_query(&mysql,mysql_temp) < 0)
+    {
+
+        if(send(info->fd,"n",sizeof("n"),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+    }
+    else
+    {
+        if(send(info->fd,"y",sizeof("y"),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+        else
+        {
+            char temp_buf[20];
+            memset(temp_buf,'\0',sizeof(temp_buf));
+            //接受密保答案
+            if(recv(info->fd,temp_buf,sizeof(temp_buf),0) < 0)
+            {
+                my_err("recv",__LINE__);
+            }
+            
+
+            //密保答案正确
+            
+            
+
+        }
+
+    }
     //接受帐号
+    
+
         //ｉｆ帐号存在，返回ｙ
             //接受密保答案
                 //if正确　返回密码
                 //if错误  返回ｎ  
         //ｉｆ不存在返回n
 }
+
 
 //退出线程函数
 void *exit_system(void *arg)
@@ -114,6 +236,16 @@ void *exit_system(void *arg)
 
 
 //获取好友名单函数
+//在好友列表里寻找，好友１－－好友２　
+//　　　　　　　　　好友２－－好友１
+//则把她的数据发送过去
+
+
+
+
+
+
+
 
 //线程回调函数
 void* serv_work(void *arg)
@@ -156,7 +288,9 @@ void* serv_work(void *arg)
                        }
                 //找回密码
                 case 3:{
-
+                            pthread_t temp_pth;
+                            pthread_create(&temp_pth,NULL,find_password,(void*)info);
+                            pthread_detach(temp_pth);
                        }
                 //客户端退出
                 case 4:{
@@ -194,6 +328,7 @@ int main(int argc,char* argv[])
     socklen_t cli_len = sizeof(cli_addr);
     
     pthread_mutex_init(&mutex,NULL);
+    pthread_mutex_init(&mysql_mutex,NULL);
 
     //初始化epoll树
     int epfd = epoll_create(2000);
@@ -254,6 +389,7 @@ int main(int argc,char* argv[])
         }
     }
     pthread_mutex_destroy(&mutex);
+    pthread_mutex_destroy(&mysql_mutex);
     close(sfd);
     //结束主线程
     pthread_exit(NULL);

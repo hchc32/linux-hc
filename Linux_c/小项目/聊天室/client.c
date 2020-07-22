@@ -134,8 +134,10 @@ int main(int argc,char *argv[])
             //找回密码
             case 3:{
                         //通过正确的生日和手机号码来找回密码
+                        printf("请输入你的帐号:");
+                        input_userinfo(sfd,"帐号");
                         printf("请输入正确的密保答案以找回密码!\n");
-                        input_userinfo(sfd,"生日");
+                        //input_userinfo(sfd,"生日");
                         input_userinfo(sfd,"手机号码");
                    }
             case 4:{
