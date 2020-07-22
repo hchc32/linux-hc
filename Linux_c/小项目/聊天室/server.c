@@ -149,7 +149,8 @@ void *sign_in(void *arg)
              {
                 my_err("send",__LINE__);
              }
-
+             //填充帐号
+             strcpy(info->user , temp_buf);
             //登录成功时候还要改变数据库中该帐号对应的状态
             memset(mysql_temp,'\0',sizeof(mysql_temp));
             sprintf(mysql_temp,"update 帐号密码 set flag = 1 where 帐号 = '%s'",temp_buf);
@@ -170,6 +171,11 @@ void *sign_in(void *arg)
 //找回密码线程函数
 void *find_password(void *arg)
 {
+    pthread_mutex_lock(&mysql_mutex);
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__); 
+    }
     Sock *info = (Sock*)arg;
     char temp_buf[10];
     memset(temp_buf,'\0',sizeof(temp_buf));
@@ -178,7 +184,7 @@ void *find_password(void *arg)
         my_err("recv",__LINE__);
     }
     
-        mysql_query(&mysql,"use try");
+    mysql_query(&mysql,"use try");
     char mysql_temp[50];
     memset(mysql_temp,'\0',sizeof(mysql_temp));
     sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf); 
@@ -200,25 +206,59 @@ void *find_password(void *arg)
         }
         else
         {
-            char temp_buf[20];
-            memset(temp_buf,'\0',sizeof(temp_buf));
+            char temp_buf1[20];
+            memset(temp_buf1,'\0',sizeof(temp_buf1));
             //接受密保答案
-            if(recv(info->fd,temp_buf,sizeof(temp_buf),0) < 0)
+            if(recv(info->fd,temp_buf1,sizeof(temp_buf1),0) < 0)
             {
                 my_err("recv",__LINE__);
             }
-            
+            //判断密保是否正确
+            memset(mysql_temp,'\0',sizeof(mysql_temp));
+            sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s and 生日=%s",temp_buf,temp_buf1); 
+            if(mysql_query(&mysql,mysql_temp) < 0)
+            {
+                if(send(info->fd,"n",sizeof("n"),0) < 0)
+                {
+                    my_err("send",__LINE__);
+                }
+            }
+            else
+            {
+                if(send(info->fd,"y",sizeof("y"),0) < 0)
+                {
+                    my_err("send",__LINE__);
+                }
+                //获取表中的数据
+                mysql_query(&mysql,"select *from 帐号密码");
+                MYSQL_RES *result = mysql_store_result(&mysql);
+                
+                //获取表的列数
+                unsigned int num_fields = mysql_num_fields(result);
 
-            //密保答案正确
-            
-            
+                //读取每一行的数据
+                MYSQL_ROW row;
+                char temp_password[20];
+                memset(temp_password,'\0',sizeof(temp_password));
+                while((row = mysql_fetch_row(result)))
+                {
+                    if(strcmp(temp_buf,row[0]) == 0)
+                    {
+                        strcpy(temp_password,row[2]);
+                    }
+                }
 
+                //将密码发送给客户端
+                if(send(info->fd,temp_password,sizeof(temp_password),0) < 0)
+                {
+                    my_err("send",__LINE__);
+                }        
+            }
         }
-
     }
+    close_mysql(&mysql);
+    pthread_mutex_unlock(&mysql_mutex);
     //接受帐号
-    
-
         //ｉｆ帐号存在，返回ｙ
             //接受密保答案
                 //if正确　返回密码
@@ -227,24 +267,14 @@ void *find_password(void *arg)
 }
 
 
-//退出线程函数
-void *exit_system(void *arg)
-{
+    
     //改变目前的登录状态
     //树结点的删除
-}
-
 
 //获取好友名单函数
 //在好友列表里寻找，好友１－－好友２　
 //　　　　　　　　　好友２－－好友１
 //则把她的数据发送过去
-
-
-
-
-
-
 
 
 //线程回调函数
@@ -294,8 +324,22 @@ void* serv_work(void *arg)
                        }
                 //客户端退出
                 case 4:{
+                           pthread_mutex_lock(&mysql_mutex);
+                           connect_mysql(&mysql);
+                           
+                           //修改对应帐号的状态
+                           char mysql_buf[50];
+                           memset(mysql_buf,'\0',sizeof(mysql_buf));
+                           sprintf(mysql_buf,"update 帐号密码 set flag = 0 where 帐号 = %s ",info->user);
+                                 
+                           //删除ｅｐｏｌｌ树中的事件 
 
+                           close_mysql(&mysql);
+                           pthread_mutex_unlock(&mysql_mutex);
+                           
+                           pthread_exit(NULL);
                        }
+                //
                 case 5:{
 
                        }

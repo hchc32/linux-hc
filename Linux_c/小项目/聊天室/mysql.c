@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<mysql/mysql.h>
+#include<string.h>
 #include"my_error.c"
 
 /*
@@ -52,6 +53,31 @@ int close_mysql(MYSQL *mysql)
     mysql_library_end();
     return 0;
 }
+
+/*
+ *
+ *
+ *
+ *
+ *
+*/
+int find_strings(MYSQL *mysql,char *strings)
+{
+    mysql_query(mysql,"use try");
+    char mysql_temp[50];
+    memset(mysql_temp,'\0',sizeof(mysql_temp));
+    sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",strings);
+
+    if(mysql_query(mysql,mysql_temp) < 0)
+    {
+
+    }   
+    else
+    {
+
+}
+
+
 
 /*
  *函数名:get_rows
