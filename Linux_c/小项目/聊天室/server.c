@@ -22,16 +22,106 @@ typedef struct Sock
     char user[10];             //用户的帐号
     pthread_t id;              //线程id
 }Sock;
-
 MYSQL mysql;
+pthread_mutex_t mutex;
+
+
+//注册线程函数
+void* registers(void* arg)
+{
+    Sock *info = (Sock*)arg;
+    regist temp_buf;
+    //再读一次数据,
+    if(recv(info->fd,&temp_buf,sizeof(temp_buf),0) < 0)
+    {
+        my_err("recv",__LINE__);
+        pthread_exit(NULL);
+    }
+
+    //然后将数据存放到数据库中
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__);
+        pthread_exit(NULL);
+    }
+        mysql_query(&mysql,"use try");
+    //获得表中所有数据
+    mysql_query(&mysql,"select *from 帐号密码");        
+    MYSQL_RES *result = mysql_store_result(&mysql);
+
+    //获取表的列数
+    unsigned int num_fields = mysql_num_fields(result);
+
+    //读取每一行数据
+    MYSQL_ROW row ;
+    while((row = mysql_fetch_row(result)))
+    {
+        strcpy(temp_buf.accounts,row[0]);
+    }
+    int change = atoi(temp_buf.accounts);
+    change++ ;
+    sprintf(temp_buf.accounts,"%d",change);
+    char temp[100];
+    //将帐号和密码存入表中
+    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",\
+            temp_buf.accounts,temp_buf.user_name,temp_buf.password,temp_buf.birthday);
+    mysql_query(&mysql,temp);
+    close_mysql(&mysql);                                                               
+    //然后向客户端发送帐号                                     
+    char temp_account[10];
+    if(send(info->fd,temp_account,sizeof(temp_account),0) < 0)
+    {
+        my_err("send",__LINE__);
+        pthread_exit(NULL);
+    }   
+    pthread_exit(NULL);
+}
+
+//登录线程函数
+void *sign_in(void *arg)
+{
+    Sock *info = (Sock*)arg;
+
+    //连接的套接字
+    info->fd 
+    //接受用户的帐号
+    //判断帐号是否存在
+        //存在则再读取密码
+            //密码不正确返回n
+            //存在返回y
+        //否则返回n
+    //登录成功时候还要改变数据库中该帐号对应的状态
+    
+}
+
+//找回密码线程函数
+void *find_password(void *arg)
+{
+    //接受帐号
+        //ｉｆ帐号存在，返回ｙ
+            //接受密保答案
+                //if正确　返回密码
+                //if错误  返回ｎ  
+        //ｉｆ不存在返回n
+}
+
+//退出线程函数
+void *exit_system(void *arg)
+{
+    //改变目前的登录状态
+    //树结点的删除
+}
+
+
+//获取好友名单函数
 
 //线程回调函数
 void* serv_work(void *arg)
 {
     Sock *info = (Sock*)arg;
+    pthread_mutex_unlock(&mutex);
     while(1)
     {
-        
         //读取客户端发来的数据
         int buf = -1;
         int len = recv(info->fd,&buf,sizeof(buf),0);
@@ -54,55 +144,15 @@ void* serv_work(void *arg)
             {
                 //注册功能
                 case 1:{
-                           regist temp_buf;
-                            //再读一次数据,
-                            if(recv(info->fd,&temp_buf,sizeof(temp_buf),0) < 0)
-                            {
-                                my_err("recv",__LINE__);
-                                pthread_exit(NULL);
-                            }
-                            
-                            //然后将数据存放到数据库中
-                            if(connect_mysql(&mysql) < 0)
-                            {
-                                my_err("connect_mysql",__LINE__);
-                                pthread_exit(NULL);
-                            }
-                                mysql_query(&mysql,"use try");
-                            //获得表中所有数据
-                            mysql_query(&mysql,"select *from 帐号密码");        
-                            MYSQL_RES *result = mysql_store_result(&mysql);
-
-                            //获取表的列数
-                            unsigned int num_fields = mysql_num_fields(result);
-
-                            //读取每一行数据
-                            MYSQL_ROW row ;
-                            while((row = mysql_fetch_row(result)))
-                            {
-                                strcpy(temp_buf.accounts,row[0]);
-                            }
-                            int change = atoi(temp_buf.accounts);
-                            change++ ;
-                            sprintf(temp_buf.accounts,"%d",change);
-                            char temp[100];
-                            //将帐号和密码存入表中
-                            sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",\
-                                    temp_buf.accounts,temp_buf.user_name,temp_buf.password,temp_buf.birthday);
-                            mysql_query(&mysql,temp);
-                            close_mysql(&mysql);
-                            //然后向客户端发送帐号
-                            char temp_account[10];
-                            if(send(info->fd,temp_account,sizeof(temp_account),0) < 0)
-                            {
-                                my_err("send",__LINE__);
-                                pthread_exit(NULL);
-                            }
-                        
+                            pthread_t temp_pth;
+                            pthread_create(&temp_pth,NULL,registers,(void*)info);
+                            pthread_detach(temp_pth);
                        }
                 //登录功能
                 case 2:{
-
+                            pthread_t temp_pth;
+                            pthread_create(&temp_pth,NULL,sign_in,(void*)info);
+                            pthread_detach(temp_pth);
                        }
                 //找回密码
                 case 3:{
@@ -143,6 +193,8 @@ int main(int argc,char* argv[])
     struct sockaddr_in cli_addr;
     socklen_t cli_len = sizeof(cli_addr);
     
+    pthread_mutex_init(&mutex,NULL);
+
     //初始化epoll树
     int epfd = epoll_create(2000);
     struct epoll_event ev;
@@ -165,6 +217,7 @@ int main(int argc,char* argv[])
             //是否有待连接的fd
             if(fd == sfd)
             {
+                pthread_mutex_lock(&mutex);
                 //接受连接请求
                 info[i].fd = accept(sfd,(struct sockaddr*)&cli_addr,&cli_len);
                 if(info[i].fd == -1)
@@ -178,8 +231,6 @@ int main(int argc,char* argv[])
                 flag |= O_NONBLOCK;
                 fcntl(info[i].fd,F_SETFL,flag);
 
-                //判断帐号和密码是否正确
-
 
                 //将新得的fd加入事件表
                 struct epoll_event temp;
@@ -187,8 +238,6 @@ int main(int argc,char* argv[])
                 temp.events = EPOLLIN | EPOLLET;
                 temp.data.fd = info[i].fd;
                 epoll_ctl(epfd,EPOLL_CTL_ADD,info[i].fd,&temp);
-                //新成员已经上线
-                
             }
             else
             {
@@ -204,7 +253,7 @@ int main(int argc,char* argv[])
             }
         }
     }
-
+    pthread_mutex_destroy(&mutex);
     close(sfd);
     //结束主线程
     pthread_exit(NULL);

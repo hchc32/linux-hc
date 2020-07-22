@@ -19,16 +19,6 @@
 #define VALID_USERINFO   'y' //用户信息有效
 
 
-void *recv_data(void *arg)
-{
-    while(1)
-    {
-        if(recv(servfd,))
-    }
-}
-
-
-
 int main(int argc,char *argv[])
 {
     int sfd;
