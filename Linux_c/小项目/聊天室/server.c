@@ -38,6 +38,7 @@ void* registers(void* arg)
         my_err("recv",__LINE__);
         pthread_exit(NULL);
     }
+    printf("接受的数据:%s,%s,%s\n",temp_buf.user_name ,temp_buf.password,temp_buf.birthday);
     
     //数据库操作加锁
     pthread_mutex_lock(&mysql_mutex);
@@ -65,10 +66,10 @@ void* registers(void* arg)
     change++ ;
     sprintf(temp_buf.accounts,"%d",change);
     char temp[200];
-    printf("%s,%s\n",temp_buf.user_name,temp_buf.birthday);
+    memset(temp,0,sizeof(temp));
     //将帐号和密码存入表中
-    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",\
-            temp_buf.accounts,temp_buf.user_name,temp_buf.password,temp_buf.birthday);
+    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')"\
+            ,temp_buf.accounts,temp_buf.user_name,temp_buf.password,temp_buf.birthday);
     mysql_query(&mysql,temp);
     close_mysql(&mysql);               
 
@@ -113,21 +114,22 @@ void *sign_in(void *arg)
     //帐号 昵称 密码 在现状态
     //判断帐号是否存在
     
-    //
     mysql_query(&mysql,"use try");
     char mysql_temp[200];
     memset(mysql_temp,'\0',sizeof(mysql_temp));
     sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf);
    
-    //帐号不存在
-    if(mysql_query(&mysql,mysql_temp) != 0) 
+    mysql_query(&mysql,mysql_temp);
+    MYSQL_RES *result = mysql_store_result(&mysql);
+    MYSQL_ROW row = mysql_fetch_row(result);
+    if(strcmp(row[0],temp_buf) != 0) 
     {
         if(send((*info)->fd,"n\n",sizeof("n\n"),0) < 0)
         {
             my_err("send",__LINE__);
         }
     }
-    else
+    else 
     {
         if(send((*info)->fd,"y\n",sizeof("y\n"),0) < 0)
         {
@@ -140,10 +142,8 @@ void *sign_in(void *arg)
             my_err("recv",__LINE__);
            // pthread_exit(NULL);
         }
-        //获得表中所有数据
-        memset(mysql_temp,'\0',sizeof(mysql_temp));
-        sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s and 密码='%s'",temp_buf,temp_buf1);
-        if(mysql_query(&mysql,mysql_temp) != 0)
+        //判断密码
+        if(strcmp(row[2],temp_buf1) != 0)
         {
             if(send((*info)->fd,"n",sizeof("n"),0) < 0)
             {
@@ -305,8 +305,7 @@ void* serv_work(void *arg)
         {
             printf("客户端已经断开连接\n");
             close(info->fd);
-            continue;
-            //break;
+            break;
         }
         else
         {
@@ -316,12 +315,9 @@ void* serv_work(void *arg)
             {
                 //注册功能
                 case 1:{
-                            printf("1\n");
                             pthread_t temp_pth;
                             pthread_create(&temp_pth,NULL,registers,(void*)&info);
-                            printf("2\n");
                             pthread_detach(temp_pth);
-                            printf("3\n");
                             break;
                        }
                 //登录功能

@@ -6,10 +6,10 @@
 //用户信息
 typedef struct zhuce
 {
+    char accounts[10];    //帐号
     char user_name[20];   //用户昵称
     char password[20];    //密码
-    char birthday[10];    //生日
-    char accounts[10];    //帐号
+    char birthday[15];    //生日
     int cs_flag;          //未知
 }regist;
 
