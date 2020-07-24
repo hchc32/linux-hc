@@ -34,6 +34,9 @@ int get_lfd(void)
     serv_addr.sin_port = htons(SERV_PORT);
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
+    int opt = 1;
+    setsockopt(sfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+    
     //绑定到本地端口
     if(bind(sfd,(struct sockaddr*)&serv_addr,serv_len) < 0)
     {

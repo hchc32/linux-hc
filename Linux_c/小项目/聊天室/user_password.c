@@ -3,9 +3,10 @@
 #include<string.h>
 #include<mysql/mysql.h>
 #include<sys/socket.h>
-#include"mysql.c"
+#include"mysql.h"
 #include"my_socket.h"
 #include"user_password.h"
+#include"my_error.h"
 
 /*
  *函数名:get_user_pass
@@ -15,7 +16,7 @@
 */
 int JoinMysql(MYSQL *mysql, regist *info)
 {
-    char temp[100];
+    char temp[200];
     //查询帐号密码表中最后一个帐号
     //打开数据库
     if(connect_mysql(mysql) < 0)
@@ -90,14 +91,18 @@ void input_userinfo(int conn_fd,const char *string)
     //输入用户信息直到正确为止
     do
     {
-        printf("%s:",string);
+        printf("%s:\n",string);
+        //fflush(stdout);
+        /*
         if(get_userinfo(input_buf,20) < 0 )
         {
             printf("get_userinfo error! line:%d",__LINE__);
             exit(1);
         }
+        */
+        scanf("%s",input_buf);
 
-        if(send(conn_fd,input_buf,strlen(input_buf),0) < 0)
+        if(send(conn_fd,input_buf,sizeof(input_buf),0) < 0)
         {
             my_err("send",__LINE__);
         }
@@ -108,6 +113,7 @@ void input_userinfo(int conn_fd,const char *string)
             printf("my_recv error! line:%d",__LINE__);
             exit(1);
         }
+        printf("%c\n",recv_buf[0]);
         if(recv_buf[0] == VALID_USERINFO)                       
         {
             flag_userinfo = VALID_USERINFO;

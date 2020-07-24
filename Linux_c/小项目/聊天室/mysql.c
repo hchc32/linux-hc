@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<mysql/mysql.h>
 #include<string.h>
-#include"my_error.c"
+#include"my_error.h"
 
 /*
  *函数名:connect_mysql
@@ -75,9 +75,9 @@ int find_strings(MYSQL *mysql,char *strings)
     else
     {
 
+    }
+
 }
-
-
 
 /*
  *函数名:get_rows

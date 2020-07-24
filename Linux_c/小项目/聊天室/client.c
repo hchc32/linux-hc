@@ -30,6 +30,10 @@ int main(int argc,char *argv[])
         printf("./a.out -p serv_prot -a serv_address\n");
         exit(1);
     }
+
+    //初始化服务器端地址结构
+    memset(&serv_addr,0,sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
     
     for(int i = 0; i < argc ; i++)
     {
@@ -79,10 +83,10 @@ int main(int argc,char *argv[])
     //和服务器通信
     
     //打印初始界面
-    int select = 0;
     regist client_regist;
     while(1)
     {
+        int select = 0;
         Log_In_Menu();
         printf("请输入你要操作的功能:");
         scanf("%d",&select);
@@ -90,6 +94,11 @@ int main(int argc,char *argv[])
         {
             //注册功能
             case 1:{
+                        if(send(sfd,&select,sizeof(select),0) < 0)
+                        {
+                            my_err("send",__LINE__);
+                            exit(1);
+                        }
                         memset(&client_regist,0,sizeof(client_regist));
                         client_regist.cs_flag = 1;
                         printf("请输入你要注册的帐号昵称:\n");
@@ -107,7 +116,7 @@ int main(int argc,char *argv[])
                         scanf("%s",client_regist.birthday);
                         
                         //向服务器发送数据
-                        if(send(sfd,(void*)&client_regist,sizeof(client_regist),0) < 0)
+                        if(send(sfd,&client_regist,sizeof(client_regist),0) < 0)
                         {
                             my_err("send",__LINE__);
                             exit(1);
@@ -125,11 +134,21 @@ int main(int argc,char *argv[])
                         strcpy(client_regist.accounts,recv_buf);
                         printf("你的帐号注册成功,请牢记你的帐号!\n");
                         printf("帐号为:%s\n",client_regist.accounts);
+                        break;
                    }
             //登录功能
             case 2:{
+                        if(send(sfd,&select,sizeof(select),0) < 0)
+                        {
+                            my_err("send",__LINE__);
+                            exit(1);
+                        }
                         input_userinfo(sfd,"帐号");
                         input_userinfo(sfd,"密码");
+                        printf("登录成功!\n");
+                        Fun_Menu();
+                        //进入登录模块的功能
+                        break;
                    }
             //找回密码
             case 3:{
@@ -139,11 +158,13 @@ int main(int argc,char *argv[])
                         printf("请输入正确的密保答案以找回密码!\n");
                         //input_userinfo(sfd,"生日");
                         input_userinfo(sfd,"手机号码");
+                        break;
                    }
             case 4:{
                         printf("系统即将退出!\n");
                         sleep(1);
                         exit(1);
+                        break;
                    }
             default:{
                         printf("请输入正确的选项!\n");

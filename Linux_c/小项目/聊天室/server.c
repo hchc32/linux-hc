@@ -30,10 +30,10 @@ pthread_mutex_t mysql_mutex;
 //注册线程函数
 void* registers(void* arg)
 {
-    Sock *info = (Sock*)arg;
+    Sock **info = (Sock**)arg;
     regist temp_buf;
     //再读一次数据,
-    if(recv(info->fd,&temp_buf,sizeof(temp_buf),0) < 0)
+    if(recv((*info)->fd,&temp_buf,sizeof(temp_buf),0) < 0)
     {
         my_err("recv",__LINE__);
         pthread_exit(NULL);
@@ -64,7 +64,8 @@ void* registers(void* arg)
     int change = atoi(temp_buf.accounts);
     change++ ;
     sprintf(temp_buf.accounts,"%d",change);
-    char temp[100];
+    char temp[200];
+    printf("%s,%s\n",temp_buf.user_name,temp_buf.birthday);
     //将帐号和密码存入表中
     sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",\
             temp_buf.accounts,temp_buf.user_name,temp_buf.password,temp_buf.birthday);
@@ -74,8 +75,7 @@ void* registers(void* arg)
     //数据库操作解锁
     pthread_mutex_unlock(&mysql_mutex);
     //然后向客户端发送帐号                                     
-    char temp_account[10];
-    if(send(info->fd,temp_account,sizeof(temp_account),0) < 0)
+    if(send((*info)->fd,temp_buf.accounts,sizeof(temp_buf.accounts),0) < 0)
     {
         my_err("send",__LINE__);
         pthread_exit(NULL);
@@ -86,7 +86,7 @@ void* registers(void* arg)
 //登录线程函数
 void *sign_in(void *arg)
 {
-    Sock *info = (Sock*)arg;
+    Sock **info = (Sock**)arg;
     
     //接受用户的帐号
     char temp_buf[20];
@@ -103,32 +103,39 @@ void *sign_in(void *arg)
     }
     
     //接收客户端发的帐号
-    if(recv(info->fd,temp_buf,sizeof(temp_buf),0) < 0)
+    if(recv((*info)->fd,temp_buf,sizeof(temp_buf),0) < 0)
     {
         my_err("recv",__LINE__);
        // pthread_exit(NULL);
     }
+    printf("帐号%s\n",temp_buf);
 
     //帐号 昵称 密码 在现状态
     //判断帐号是否存在
+    
+    //
     mysql_query(&mysql,"use try");
-    char mysql_temp[50];
+    char mysql_temp[200];
     memset(mysql_temp,'\0',sizeof(mysql_temp));
     sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf);
    
     //帐号不存在
-    if(mysql_query(&mysql,mysql_temp) < 0) 
+    if(mysql_query(&mysql,mysql_temp) != 0) 
     {
-        if(send(info->fd,"n",sizeof("n"),0) < 0)
+        if(send((*info)->fd,"n\n",sizeof("n\n"),0) < 0)
         {
             my_err("send",__LINE__);
         }
     }
     else
     {
+        if(send((*info)->fd,"y\n",sizeof("y\n"),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
         char temp_buf1[20];
         memset(temp_buf1,'\0',sizeof(temp_buf1));
-        if(recv(info->fd,temp_buf1,sizeof(temp_buf1),0) < 0)
+        if(recv((*info)->fd,temp_buf1,sizeof(temp_buf1),0) < 0)
         {
             my_err("recv",__LINE__);
            // pthread_exit(NULL);
@@ -136,21 +143,21 @@ void *sign_in(void *arg)
         //获得表中所有数据
         memset(mysql_temp,'\0',sizeof(mysql_temp));
         sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s and 密码='%s'",temp_buf,temp_buf1);
-        if(mysql_query(&mysql,mysql_temp) < 0)
+        if(mysql_query(&mysql,mysql_temp) != 0)
         {
-            if(send(info->fd,"n",sizeof("n"),0) < 0)
+            if(send((*info)->fd,"n",sizeof("n"),0) < 0)
             {
                 my_err("send",__LINE__);
             }
         }
         else
         {
-             if(send(info->fd,"y",sizeof("y"),0) < 0)
+             if(send((*info)->fd,"y",sizeof("y"),0) < 0)
              {
                 my_err("send",__LINE__);
              }
              //填充帐号
-             strcpy(info->user , temp_buf);
+             strcpy((*info)->user , temp_buf);
             //登录成功时候还要改变数据库中该帐号对应的状态
             memset(mysql_temp,'\0',sizeof(mysql_temp));
             sprintf(mysql_temp,"update 帐号密码 set flag = 1 where 帐号 = '%s'",temp_buf);
@@ -185,7 +192,7 @@ void *find_password(void *arg)
     }
     
     mysql_query(&mysql,"use try");
-    char mysql_temp[50];
+    char mysql_temp[200];
     memset(mysql_temp,'\0',sizeof(mysql_temp));
     sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf); 
 
@@ -287,16 +294,19 @@ void* serv_work(void *arg)
         //读取客户端发来的数据
         int buf = -1;
         int len = recv(info->fd,&buf,sizeof(buf),0);
+        printf("buf:%d\n",buf);
         if(len < 0)
         {
             my_err("recv",__LINE__);
-            pthread_exit(NULL);
+            continue;
+            //pthread_exit(NULL);
         }
         else if(len == 0)
         {
             printf("客户端已经断开连接\n");
             close(info->fd);
-            break;
+            continue;
+            //break;
         }
         else
         {
@@ -306,14 +316,18 @@ void* serv_work(void *arg)
             {
                 //注册功能
                 case 1:{
+                            printf("1\n");
                             pthread_t temp_pth;
-                            pthread_create(&temp_pth,NULL,registers,(void*)info);
+                            pthread_create(&temp_pth,NULL,registers,(void*)&info);
+                            printf("2\n");
                             pthread_detach(temp_pth);
+                            printf("3\n");
+                            break;
                        }
                 //登录功能
                 case 2:{
                             pthread_t temp_pth;
-                            pthread_create(&temp_pth,NULL,sign_in,(void*)info);
+                            pthread_create(&temp_pth,NULL,sign_in,(void*)&info);
                             pthread_detach(temp_pth);
                        }
                 //找回密码
@@ -328,7 +342,7 @@ void* serv_work(void *arg)
                            connect_mysql(&mysql);
                            
                            //修改对应帐号的状态
-                           char mysql_buf[50];
+                           char mysql_buf[200];
                            memset(mysql_buf,'\0',sizeof(mysql_buf));
                            sprintf(mysql_buf,"update 帐号密码 set flag = 0 where 帐号 = %s ",info->user);
                                  
@@ -363,11 +377,12 @@ void* serv_work(void *arg)
 
 int main(int argc,char* argv[])
 {
+    printf("$$$$$4\n");
     int sfd;
     Sock info[2000];
     //获取监听套接字
     sfd = get_lfd();
-
+    
     struct sockaddr_in cli_addr;
     socklen_t cli_len = sizeof(cli_addr);
     
@@ -405,11 +420,12 @@ int main(int argc,char* argv[])
                     exit(1);
                 }
 
+                /*
                 //设置cfd为非阻塞模式
                 int flag = fcntl(info[i].fd,F_GETFL);
                 flag |= O_NONBLOCK;
                 fcntl(info[i].fd,F_SETFL,flag);
-
+                */
 
                 //将新得的fd加入事件表
                 struct epoll_event temp;
