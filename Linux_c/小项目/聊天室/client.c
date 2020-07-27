@@ -114,9 +114,14 @@ int main(int argc,char *argv[])
                         printf("密保问题:\n");
                         printf("你的电话号码是多少?(11位数)\n:");
                         scanf("%s",client_regist.phone_num);
+
+                        char send_string[1024];
+                        memset(send_string,0,1024);
+                        //结构体转成字符串
+                        memcpy(send_string,&client_regist,sizeof(client_regist));
                         
                         //向服务器发送数据
-                        if(send(sfd,&client_regist,sizeof(client_regist),0) < 0)
+                        if(send(sfd,send_string,sizeof(send_string),0) < 0)
                         {
                             my_err("send",__LINE__);
                             exit(1);
@@ -143,14 +148,9 @@ int main(int argc,char *argv[])
                             my_err("send",__LINE__);
                             exit(1);
                         }
-                        if(input_userinfo(sfd,"帐号") == 0)
+                        if(input_userinfo(sfd) == 0)
                         {
-                            printf("帐号错误!");
-                            break;
-                        }
-                        if(input_userinfo(sfd,"密码") == 0)
-                        {
-                            printf("密码错误!");
+                            printf("帐号或密码错误!");
                             break;
                         }
                         printf("登录成功!\n");
@@ -162,10 +162,10 @@ int main(int argc,char *argv[])
             case 3:{
                         //通过正确的生日和手机号码来找回密码
                         printf("请输入你的帐号:");
-                        input_userinfo(sfd,"帐号");
+                        //input_userinfo(sfd,"帐号");
                         printf("请输入正确的密保答案以找回密码!\n");
                         //input_userinfo(sfd,"生日");
-                        input_userinfo(sfd,"手机号码");
+                       // input_userinfo(sfd,"手机号码");
                         break;
                    }
             case 4:{

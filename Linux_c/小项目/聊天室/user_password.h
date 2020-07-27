@@ -13,8 +13,13 @@ typedef struct zhuce
     int cs_flag;          //在线状态
 }regist;
 
+typedef struct denglu
+{
+    char accounts[10];
+    char password[20];
+}Log;
 int JoinMysql(MYSQL *mysql,regist *info);
 int get_userinfo(char *buf,int len);
-int input_userinfo(int conn_fd,const char *string);
+int input_userinfo(int conn_fd);
 
 #endif

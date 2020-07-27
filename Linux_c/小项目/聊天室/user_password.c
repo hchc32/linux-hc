@@ -83,32 +83,35 @@ int get_userinfo(char *buf,int len)
  *         string --- 用户名
  *返回值:无
 */
-int input_userinfo(int conn_fd,const char *string)
+int input_userinfo(int conn_fd)
 {
-    char input_buf[20];
-    char recv_buf[BUFSIZE];
-    memset(input_buf,'\0',sizeof(input_buf));
-    printf("%s:\n",string);
-    scanf("%s",input_buf);
+    Log input;
+    char buf[BUFSIZE];
+    memset(&input,'\0',sizeof(input));
+    memset(buf,'\0',sizeof(buf));
+    printf("帐号:\n");
+    scanf("%s",input.accounts);
+    printf("密码:\n");
+    scanf("%s",input.password);
 
-    if(send(conn_fd,input_buf,sizeof(input_buf),0) < 0)
+    memcpy(buf,&input,sizeof(buf));
+    if(send(conn_fd,&buf,sizeof(buf),0) < 0)
     {
         my_err("send",__LINE__);
     }
-
+    
+    memset(buf,'\0',sizeof(buf));
     //从连接套接字上读取一次数据
-    if(recv(conn_fd,recv_buf,sizeof(recv_buf),0) < 0)
+    if(recv(conn_fd,buf,sizeof(buf),0) < 0)
     {
         printf("my_recv error! line:%d",__LINE__);
-        exit(1);
     }
-    if(recv_buf[0] == VALID_USERINFO)                       
+    if(buf[0] == VALID_USERINFO)                       
     {
         return 1;
     }
     else
     {
-        printf("%s error,input again",string);
         return 0;
     }
 }

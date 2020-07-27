@@ -31,12 +31,14 @@ void* registers(void* arg)
 {
     Sock **info = (Sock**)arg;
     regist temp_buf;
+    char recv_string[1024];
     //读取客户端发来的数据
-    while(1)
-    {
-        int temp = 0;
-        int recv_back = recv((*info)->fd,&temp_buf,sizeof(temp_buf),0);
+   // while(1)
+   // {
+    //    int temp = 0;
+        int recv_back = recv((*info)->fd,recv_string,sizeof(recv_string),0);
         //再读一次数据,
+/*
         if(recv_back < 0)
         {
             my_err("recv",__LINE__);
@@ -53,6 +55,8 @@ void* registers(void* arg)
             break;
         }
     }
+    */
+    memcpy(&temp_buf,recv_string,sizeof(temp_buf));
     printf("接受的数据:%s,%s,%s\n",temp_buf.user_name ,temp_buf.password,temp_buf.phone_num);
     
     //数据库操作加锁
@@ -61,7 +65,6 @@ void* registers(void* arg)
     if(connect_mysql(&mysql) < 0)
     {
         my_err("connect_mysql",__LINE__);
-        pthread_exit(NULL);
     }
     mysql_query(&mysql,"use try");
     //获得表中所有数据
@@ -104,9 +107,10 @@ void *sign_in(void *arg)
 {
     Sock **info = (Sock**)arg;
     //接受用户的帐号
-    char temp_buf[10];
+    Log serv_log;
+    char buf[1024];
     char mysql_temp[200];
-    MYSQL_ROW row;
+    memset(buf,'\0',sizeof(buf));
     //数据库操作加锁
     pthread_mutex_lock(&mysql_mutex);
     //连接数据库
@@ -114,13 +118,15 @@ void *sign_in(void *arg)
     {
         my_err("connect_mysql",__LINE__);
     }
-    memset(temp_buf,'\0',sizeof(temp_buf));
-    //接收客户端发的帐号
-    int temp = 0;
-    //while(1)
-   // {
-        //int recv_back = ;
-        recv((*info)->fd,&temp_buf,sizeof(temp_buf),0);
+    memset(&serv_log,'\0',sizeof(serv_log));
+    //接收客户端发的用户登录信息
+    if(recv((*info)->fd,&buf,sizeof(buf),0) < 0)
+    {
+        my_err("recv",__LINE__);
+    }
+    printf("buf:%s\n",buf);
+    memcpy(&serv_log,buf,sizeof(serv_log));
+    memcpy(&serv_log,buf,sizeof(serv_log));
    /*     if(recv_back < 0)
         {
             my_err("recv",__LINE__);
@@ -137,87 +143,54 @@ void *sign_in(void *arg)
         }
     }
     */
-    printf("要登录的帐号%s\n",temp_buf);
+    printf("要登录的帐号%s\n",serv_log.accounts);
+    printf("要登录的帐号密码%s\n",serv_log.password);
+    for(int i =0 ; i< 30; i++)
+    {
+        if(i<10)
+            serv_log.accounts[i] = buf[i];
+        else
+            serv_log.password[i] = buf[i];
+    }
+    printf("要登录的帐号%s\n",serv_log.accounts);
+    printf("要登录的帐号密码%s\n",serv_log.password);
 
         //帐号 昵称 密码 电话号码 在现状态
         //判断帐号是否存在
-        
-    printf("%d\n",__LINE__);
     mysql_query(&mysql,"use try");
     memset(mysql_temp,'\0',sizeof(mysql_temp));
-    sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp_buf);
+    sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",serv_log.accounts);
    
     if(mysql_query(&mysql,mysql_temp) < 0)
     {
         my_err("mysql_query",__LINE__);
     }
     MYSQL_RES *result = mysql_store_result(&mysql);
-    row = mysql_fetch_row(result);
-    if(strcmp(row[0],temp_buf) != 0) 
-    {
-        if(send((*info)->fd,"n\n",sizeof("n\n"),0) < 0)
-        {
-            my_err("send",__LINE__);
-        }
-        pthread_exit(NULL);
-    }
-    else
+    MYSQL_ROW row = mysql_fetch_row(result);
+    printf("row[0]:%s",row[0]);
+    printf("row[2]:%s",row[2]);
+    if(strcmp(row[0],serv_log.accounts) == 0 && strcmp(row[2],serv_log.password) == 0) 
     {
         if(send((*info)->fd,"y\n",sizeof("y\n"),0) < 0)
         {
             my_err("send",__LINE__);
         }
-    }
-    char temp_buf1[20];
-    memset(temp_buf1,'\0',sizeof(temp_buf1));
-    int temp1 = 0;
-  //  while(1)
-  //  {
-        int recv_back = recv((*info)->fd,&temp_buf1,sizeof(temp_buf1),0);
-  /*      if(recv_back < 0)
-        {
-            my_err("recv",__LINE__);
-            pthread_exit(NULL);
-        }
-        if(recv_back < sizeof(temp_buf1))
-        {
-            temp1 += recv_back;
-            continue;
-
-        }
-        if(temp1 = sizeof(temp_buf1))
-        {
-            break;
-        }
-        */
-   // }
-    printf("要登录帐号的密码%s\n",temp_buf1);
-
-    //判断密码
-    if(strcmp(row[2],temp_buf1) != 0)
-    {
-        if(send((*info)->fd,"n",sizeof("n"),0) < 0)
-        {
-            my_err("send",__LINE__);
-        }
-        pthread_exit(NULL);
+        //填充帐号
+       strcpy((*info)->user , serv_log.accounts);
+       //登录成功时候还要改变数据库中该帐号对应的状态
+       memset(mysql_temp,'\0',sizeof(mysql_temp));
+       sprintf(mysql_temp,"update 帐号密码 set flag=1 where 帐号='%s'",serv_log.accounts);
+       if(mysql_query(&mysql,mysql_temp) < 0)
+       {
+           my_err("mysql_query",__LINE__);
+       }
     }
     else
     {
-         if(send((*info)->fd,"y",sizeof("y"),0) < 0)
-         {
-            my_err("send",__LINE__);
-         }
-        //填充帐号
-        strcpy((*info)->user , temp_buf);
-        //登录成功时候还要改变数据库中该帐号对应的状态
-        memset(mysql_temp,'\0',sizeof(mysql_temp));
-        sprintf(mysql_temp,"update 帐号密码 set flag = 1 where 帐号 = \"%s\"",temp_buf);
-        if(mysql_query(&mysql,mysql_temp) < 0)
+        if(send((*info)->fd,"n\n",sizeof("n\n"),0) < 0)
         {
-            my_err("mysql_query",__LINE__);
+            my_err("send",__LINE__);
         }
-        
     }
     //关闭数据库
     close_mysql(&mysql);
