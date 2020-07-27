@@ -43,7 +43,7 @@ int JoinMysql(MYSQL *mysql, regist *info)
     sprintf(info->accounts,"%d",change);
 
     //将帐号和密码存入表中
-    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",info->accounts,info->user_name,info->password,info->birthday);
+    sprintf(temp,"insert into 帐号密码 values('%s','%s','%s','%s')",info->accounts,info->user_name,info->password,info->phone_num);
     mysql_query(mysql,temp);
 
     //关闭数据库
@@ -83,47 +83,34 @@ int get_userinfo(char *buf,int len)
  *         string --- 用户名
  *返回值:无
 */
-void input_userinfo(int conn_fd,const char *string)
+int input_userinfo(int conn_fd,const char *string)
 {
     char input_buf[20];
     char recv_buf[BUFSIZE];
-    int flag_userinfo;
-    //输入用户信息直到正确为止
-    do
+    memset(input_buf,'\0',sizeof(input_buf));
+    printf("%s:\n",string);
+    scanf("%s",input_buf);
+
+    if(send(conn_fd,input_buf,sizeof(input_buf),0) < 0)
     {
-        printf("%s:\n",string);
-        //fflush(stdout);
-        /*
-        if(get_userinfo(input_buf,20) < 0 )
-        {
-            printf("get_userinfo error! line:%d",__LINE__);
-            exit(1);
-        }
-        */
-        scanf("%s",input_buf);
+        my_err("send",__LINE__);
+    }
 
-        if(send(conn_fd,input_buf,sizeof(input_buf),0) < 0)
-        {
-            my_err("send",__LINE__);
-        }
-
-        //从连接套接字上读取一次数据
-        if(recv(conn_fd,recv_buf,sizeof(recv_buf),0) < 0)
-        {
-            printf("my_recv error! line:%d",__LINE__);
-            exit(1);
-        }
-        printf("%c\n",recv_buf[0]);
-        if(recv_buf[0] == VALID_USERINFO)                       
-        {
-            flag_userinfo = VALID_USERINFO;
-        }
-        else
-        {
-            printf("%s error,input again",string);
-            flag_userinfo = INVALID_USERINFO;
-        }
-    }while(flag_userinfo == INVALID_USERINFO);
+    //从连接套接字上读取一次数据
+    if(recv(conn_fd,recv_buf,sizeof(recv_buf),0) < 0)
+    {
+        printf("my_recv error! line:%d",__LINE__);
+        exit(1);
+    }
+    if(recv_buf[0] == VALID_USERINFO)                       
+    {
+        return 1;
+    }
+    else
+    {
+        printf("%s error,input again",string);
+        return 0;
+    }
 }
 
 

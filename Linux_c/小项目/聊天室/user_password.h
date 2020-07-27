@@ -9,12 +9,12 @@ typedef struct zhuce
     char accounts[10];    //帐号
     char user_name[20];   //用户昵称
     char password[20];    //密码
-    char birthday[15];    //生日
-    int cs_flag;          //未知
+    char phone_num[11];    //电话号码
+    int cs_flag;          //在线状态
 }regist;
 
 int JoinMysql(MYSQL *mysql,regist *info);
 int get_userinfo(char *buf,int len);
-void input_userinfo(int conn_fd,const char *string);
+int input_userinfo(int conn_fd,const char *string);
 
 #endif

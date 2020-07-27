@@ -100,7 +100,7 @@ int main(int argc,char *argv[])
                             exit(1);
                         }
                         memset(&client_regist,0,sizeof(client_regist));
-                        client_regist.cs_flag = 1;
+                        //client_regist.cs_flag = 1;
                         printf("请输入你要注册的帐号昵称:\n");
                         scanf("%s",client_regist.user_name);
                         
@@ -112,8 +112,8 @@ int main(int argc,char *argv[])
                         while(strlen(client_regist.password) < 7);
 
                         printf("密保问题:\n");
-                        printf("你的生日是多少?(XXXX-XX-XX)\n:");
-                        scanf("%s",client_regist.birthday);
+                        printf("你的电话号码是多少?(11位数)\n:");
+                        scanf("%s",client_regist.phone_num);
                         
                         //向服务器发送数据
                         if(send(sfd,&client_regist,sizeof(client_regist),0) < 0)
@@ -143,8 +143,16 @@ int main(int argc,char *argv[])
                             my_err("send",__LINE__);
                             exit(1);
                         }
-                        input_userinfo(sfd,"帐号");
-                        input_userinfo(sfd,"密码");
+                        if(input_userinfo(sfd,"帐号") == 0)
+                        {
+                            printf("帐号错误!");
+                            break;
+                        }
+                        if(input_userinfo(sfd,"密码") == 0)
+                        {
+                            printf("密码错误!");
+                            break;
+                        }
                         printf("登录成功!\n");
                         Fun_Menu();
                         //进入登录模块的功能
