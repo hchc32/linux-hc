@@ -18,6 +18,10 @@
 #define INVALID_USERINFO 'n' //用户信息无效
 #define VALID_USERINFO   'y' //用户信息有效
 
+void Fun_Menu()
+{
+    
+}
 
 int main(int argc,char *argv[])
 {
@@ -83,7 +87,7 @@ int main(int argc,char *argv[])
     //和服务器通信
     
     //打印初始界面
-    regist client_regist;
+    Regist client_regist;
     while(1)
     {
         int select = 0;
@@ -93,17 +97,10 @@ int main(int argc,char *argv[])
         switch(select)
         {
             //注册功能
-            case 1:{
-                        if(send(sfd,&select,sizeof(select),0) < 0)
-                        {
-                            my_err("send",__LINE__);
-                            exit(1);
-                        }
+            case REGIST:{
                         memset(&client_regist,0,sizeof(client_regist));
-                        //client_regist.cs_flag = 1;
                         printf("请输入你要注册的帐号昵称:\n");
                         scanf("%s",client_regist.user_name);
-                        
                         do
                         {
                             printf("请输入你的密码(不小于7位字符):\n");
@@ -115,13 +112,14 @@ int main(int argc,char *argv[])
                         printf("你的电话号码是多少?(11位数)\n:");
                         scanf("%s",client_regist.phone_num);
 
-                        char send_string[1024];
-                        memset(send_string,0,1024);
+                        Data send_string;
+                        memset(&send_string,0,sizeof(Data));
+                        send_string.type = 1;
                         //结构体转成字符串
-                        memcpy(send_string,&client_regist,sizeof(client_regist));
+                        memcpy(send_string.strings,&client_regist,sizeof(send_string.strings));
                         
                         //向服务器发送数据
-                        if(send(sfd,send_string,sizeof(send_string),0) < 0)
+                        if(send(sfd,&send_string,sizeof(send_string),0) < 0)
                         {
                             my_err("send",__LINE__);
                             exit(1);
@@ -136,19 +134,14 @@ int main(int argc,char *argv[])
                             my_err("recv",__LINE__);
                             exit(1);
                         }
-                        strcpy(client_regist.accounts,recv_buf);
                         printf("你的帐号注册成功,请牢记你的帐号!\n");
-                        printf("帐号为:%s\n",client_regist.accounts);
+                        printf("帐号为:%s\n",recv_buf);
                         break;
                    }
             //登录功能
-            case 2:{
-                        if(send(sfd,&select,sizeof(select),0) < 0)
-                        {
-                            my_err("send",__LINE__);
-                            exit(1);
-                        }
-                        if(input_userinfo(sfd) == 0)
+            case LOGIN:{
+                       getchar();
+                        if(login_userinfo(sfd) == 0)
                         {
                             printf("帐号或密码错误!");
                             break;
@@ -159,21 +152,31 @@ int main(int argc,char *argv[])
                         break;
                    }
             //找回密码
-            case 3:{
-                        //通过正确的生日和手机号码来找回密码
-                        printf("请输入你的帐号:");
-                        //input_userinfo(sfd,"帐号");
-                        printf("请输入正确的密保答案以找回密码!\n");
-                        //input_userinfo(sfd,"生日");
-                       // input_userinfo(sfd,"手机号码");
-                        break;
-                   }
-            case 4:{
-                        printf("系统即将退出!\n");
-                        sleep(1);
-                        exit(1);
-                        break;
-                   }
+            case FINDPASS:{
+                           char recv_buf[20];
+                           getchar();
+                           if(find_userinfo(sfd) == 0)
+                           {
+                               printf("密保信息错误!");
+                               break;
+                           }
+                           
+                           if(recv(sfd,recv_buf,sizeof(recv_buf),0) < 0)
+                           {
+                               my_err("recv",__LINE__);
+                           }
+                           printf("你的密码为:%s\n",recv_buf);
+                           break;
+                          }
+            case EXIT:{
+                          //从树上取下来
+                          //关闭套接字
+                          //改变flag:
+                          printf("系统即将退出!\n");
+                          sleep(1);
+                          exit(1);
+                          break;
+                      }
             default:{
                         printf("请输入正确的选项!\n");
                         getchar();

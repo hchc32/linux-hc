@@ -14,7 +14,7 @@
  *参数  :对应的数据库
  *返回值:void
 */
-int JoinMysql(MYSQL *mysql, regist *info)
+int JoinMysql(MYSQL *mysql, Regist *info)
 {
     char temp[200];
     //查询帐号密码表中最后一个帐号
@@ -77,30 +77,30 @@ int get_userinfo(char *buf,int len)
 }
 
 /*
- *函数名:input_userinfo
- *描述　:输入用户名，然后通过fd发送出去
+ *函数名:login_userinfo
+ *描述　:输入用户信息，然后通过fd发送出去
  *参数  :conn_fd --- 目标fd
- *         string --- 用户名
- *返回值:无
+ *返回值:信息正确返回１，否则返回0
 */
-int input_userinfo(int conn_fd)
+int login_userinfo(int conn_fd)
 {
+    Data temp;
     Log input;
     char buf[BUFSIZE];
+    memset(&temp,0,sizeof(temp));
     memset(&input,'\0',sizeof(input));
     memset(buf,'\0',sizeof(buf));
     printf("帐号:\n");
     scanf("%s",input.accounts);
     printf("密码:\n");
     scanf("%s",input.password);
-
-    memcpy(buf,&input,sizeof(buf));
-    if(send(conn_fd,&buf,sizeof(buf),0) < 0)
+    
+    temp.type = 2;
+    memcpy(temp.strings,&input,sizeof(temp.strings));
+    if(send(conn_fd,&temp,sizeof(buf),0) < 0)
     {
         my_err("send",__LINE__);
     }
-    
-    memset(buf,'\0',sizeof(buf));
     //从连接套接字上读取一次数据
     if(recv(conn_fd,buf,sizeof(buf),0) < 0)
     {
@@ -116,5 +116,44 @@ int input_userinfo(int conn_fd)
     }
 }
 
+/*
+ *函数名:find_userinfo
+ *描述:给conn_fd发送密保等信息
+ *参数：conn_fd -- 目标fd
+ *返回值:正确返1,错误返回0
+*/ 
+int find_userinfo(int conn_fd)
+{
+    Data temp;
+    FindPass input;
+    char buf[BUFSIZE];
+    memset(&temp,0,sizeof(temp));
+    memset(&input,'\0',sizeof(input));
+    memset(buf,'\0',sizeof(buf));
+    printf("帐号:\n");
+    scanf("%s",input.accounts);
+    printf("密保答案:\n");
+    scanf("%s",input.phone_num);
+
+    temp.type = FINDPASS;
+    memcpy(temp.strings,&input,sizeof(temp.strings));
+    if(send(conn_fd,&temp,sizeof(buf),0) < 0)
+    {
+        my_err("send",__LINE__);
+    }
+    //从连接套接字上读取一次数据
+    if(recv(conn_fd,buf,sizeof(buf),0) < 0)
+    {
+        printf("my_recv error! line:%d",__LINE__);
+    }
+    if(buf[0] == VALID_USERINFO)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 
