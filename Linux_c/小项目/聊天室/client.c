@@ -17,11 +17,7 @@
 #define BUFSIZE 1024
 #define INVALID_USERINFO 'n' //用户信息无效
 #define VALID_USERINFO   'y' //用户信息有效
-
-void Fun_Menu()
-{
-    
-}
+char cli_info[10];
 
 int main(int argc,char *argv[])
 {
@@ -140,8 +136,9 @@ int main(int argc,char *argv[])
                    }
             //登录功能
             case LOGIN:{
-                       getchar();
-                        if(login_userinfo(sfd) == 0)
+                        getchar();
+                        strcpy( cli_info , login_userinfo(sfd));
+                        if((char*) cli_info == NULL)
                         {
                             printf("帐号或密码错误!");
                             break;
@@ -169,9 +166,14 @@ int main(int argc,char *argv[])
                            break;
                           }
             case EXIT:{
-                          //从树上取下来
-                          //关闭套接字
-                          //改变flag:
+                          Data temp;
+                          printf("cli.info%s",cli_info);
+                          strcpy(temp.strings,cli_info);
+                          temp.type = EXIT;
+                          if(send(sfd,&temp,sizeof(Data),0) < 0)
+                          {
+                              my_err("send",__LINE__);
+                          }
                           printf("系统即将退出!\n");
                           sleep(1);
                           exit(1);

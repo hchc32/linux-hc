@@ -36,7 +36,7 @@ typedef struct data_packet
 
 int JoinMysql(MYSQL *mysql,Regist *info);
 int get_userinfo(char *buf,int len);
-int login_userinfo(int conn_fd);
+char* login_userinfo(int conn_fd);
 int find_userinfo(int conn_fd);
 
 #endif

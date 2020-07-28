@@ -25,8 +25,8 @@ typedef struct Sock
 MYSQL mysql;
 pthread_mutex_t mutex;
 pthread_mutex_t mysql_mutex;
-
-    int ret = 1;
+int exit_flag;
+int ret = 1;
 
 //注册线程函数
 void* registers(void* arg)
@@ -90,7 +90,13 @@ void *sign_in(void *arg)
     {
         my_err("mysql_query",__LINE__);
     }
-    MYSQL_RES *result = mysql_store_result(&mysql);
+    MYSQL_RES *result=mysql_store_result(&mysql);
+   /*
+    if(result != NULL)
+    {
+        printf("result error!");
+    }
+    */
     MYSQL_ROW row = mysql_fetch_row(result);
     if(strcmp(row[0],serv_log->accounts) == 0 && strcmp(row[2],serv_log->password) == 0) 
     {
@@ -173,15 +179,29 @@ void *find_password(void *arg)
     }
     close_mysql(&mysql);
     pthread_mutex_unlock(&mysql_mutex);
-    //接受帐号
-        //ｉｆ帐号存在，返回ｙ
-            //接受密保答案
-                //if正确　返回密码
-                //if错误  返回ｎ  
-        //ｉｆ不存在返回n
 }
 
-
+void* exit_user(void* arg)
+{
+    Sock **info = (Sock**)arg;
+    char *temp = (char*)(*info)->data; 
+    printf("将要退出的帐号:%s\n",temp);
+    pthread_mutex_lock(&mysql_mutex);
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__);
+    }
+    mysql_query(&mysql,"use try");
+    char mysql_temp[200];
+    memset(mysql_temp,'\0',sizeof(mysql_temp));
+    sprintf(mysql_temp,"update 帐号密码 set flag=0 where 帐号='%s'",temp);
+    if(mysql_query(&mysql,mysql_temp) < 0)
+    {
+        my_err("send",__LINE__);
+    }
+    close_mysql(&mysql);
+    pthread_mutex_unlock(&mysql_mutex);
+}
     
     //改变目前的登录状态
     //树结点的删除
@@ -204,11 +224,17 @@ void* serv_work(void *arg)
     {
         //读取客户端发来的数据
         char recv_buf[1024];
+        int ret;
         Data recv_data;
         memset(recv_buf,0,sizeof(recv_buf));
-        if(recv(info->fd,&recv_buf,sizeof(recv_buf),0) < 0)
+        ret = recv(info->fd,&recv_buf,sizeof(recv_buf),0);
+        if(ret < 0)
         {
             my_err("recv",__LINE__);
+        }
+        else if(ret == 0)
+        {
+            continue;
         }
         memset(&recv_data,0,sizeof(recv_data));
         memcpy(&recv_data,recv_buf,sizeof(recv_data));
@@ -252,20 +278,13 @@ void* serv_work(void *arg)
                           }
             //客户端退出
             case EXIT:{
-                       pthread_mutex_lock(&mysql_mutex);
-                       connect_mysql(&mysql);
-                       
-                       //修改对应帐号的状态
-                       char mysql_buf[200];
-                       memset(mysql_buf,'\0',sizeof(mysql_buf));
-                       sprintf(mysql_buf,"update 帐号密码 set flag = 0 where 帐号 = %s ",info->user);
-                             
-                       //删除ｅｐｏｌｌ树中的事件 
-
-                       close_mysql(&mysql);
-                       pthread_mutex_unlock(&mysql_mutex);
-                       
-                       pthread_exit(NULL);
+                        //解包
+                        char temp_account[10];
+                        pthread_t temp_pth;
+                        memcpy(temp_account,recv_data.strings,sizeof(temp_account));
+                        info->data = temp_account;
+                        pthread_create(&temp_pth,NULL,exit_user,(void*)&info);
+                        break;
                    }
                 //
                 case 5:{
@@ -284,6 +303,9 @@ void* serv_work(void *arg)
         //pthread_mutex_unlock(&mutex);
             //对于接收的数据进行处理
             //好友名单
+            //  好友表：　帐号１　　帐号２　消息记录　好友关系（１正常好友　０　１把２拉黑）
+            //服务器端获取账号,然后在数据库中寻找对应的好友，再通过帐号表查出昵称和flag，每次将帐号和昵称发过去
+            //客户端，循环读区每次发的包，然后存在链表里,再打印出来
             //好友离开的消息
             //私聊
             //群聊
@@ -336,7 +358,6 @@ int main(int argc,char* argv[])
                     my_err("accept",__LINE__);
                     exit(1);
                 }
-
                 /*
                 //设置cfd为非阻塞模式
                 int flag = fcntl(info[i].fd,F_GETFL);
@@ -359,9 +380,9 @@ int main(int argc,char* argv[])
                 }
                 //创建子线程
                 pthread_create(&id,NULL,serv_work,(void*)&info[i]);
-                
+                 
                 //进行线程分离
-                pthread_detach(id);
+                //pthread_detach(id);
             }
         }
     }

@@ -80,13 +80,14 @@ int get_userinfo(char *buf,int len)
  *函数名:login_userinfo
  *描述　:输入用户信息，然后通过fd发送出去
  *参数  :conn_fd --- 目标fd
- *返回值:信息正确返回１，否则返回0
+ *返回值:信息正确返回信息结构体指针，否则返回ＮＵＬＬ
 */
-int login_userinfo(int conn_fd)
+char* login_userinfo(int conn_fd)
 {
     Data temp;
     Log input;
     char buf[BUFSIZE];
+    char *point = input.accounts;
     memset(&temp,0,sizeof(temp));
     memset(&input,'\0',sizeof(input));
     memset(buf,'\0',sizeof(buf));
@@ -95,7 +96,7 @@ int login_userinfo(int conn_fd)
     printf("密码:\n");
     scanf("%s",input.password);
     
-    temp.type = 2;
+    temp.type = LOGIN;
     memcpy(temp.strings,&input,sizeof(temp.strings));
     if(send(conn_fd,&temp,sizeof(buf),0) < 0)
     {
@@ -108,11 +109,11 @@ int login_userinfo(int conn_fd)
     }
     if(buf[0] == VALID_USERINFO)                       
     {
-        return 1;
+        return point;
     }
     else
     {
-        return 0;
+        return NULL;
     }
 }
 
