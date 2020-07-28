@@ -137,12 +137,13 @@ int main(int argc,char *argv[])
             //登录功能
             case LOGIN:{
                         getchar();
-                        strcpy( cli_info , login_userinfo(sfd));
-                        if((char*) cli_info == NULL)
+                        char *temp = login_userinfo(sfd);
+                        if(temp == NULL)
                         {
                             printf("帐号或密码错误!");
                             break;
                         }
+                        strcpy(cli_info,temp);
                         printf("登录成功!\n");
                         Fun_Menu();
                         //进入登录模块的功能

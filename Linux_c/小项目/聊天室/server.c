@@ -91,14 +91,16 @@ void *sign_in(void *arg)
         my_err("mysql_query",__LINE__);
     }
     MYSQL_RES *result=mysql_store_result(&mysql);
-   /*
-    if(result != NULL)
-    {
-        printf("result error!");
-    }
-    */
     MYSQL_ROW row = mysql_fetch_row(result);
-    if(strcmp(row[0],serv_log->accounts) == 0 && strcmp(row[2],serv_log->password) == 0) 
+    //没有查到帐号
+    if(row == NULL)
+    {
+        if(send((*info)->fd,"n\n",sizeof("n\n"),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+    }
+    else if(strcmp(row[2],serv_log->password) == 0) 
     {
         if(send((*info)->fd,"y\n",sizeof("y\n"),0) < 0)
         {
@@ -150,11 +152,17 @@ void *find_password(void *arg)
     else
     {
         MYSQL_RES *result = mysql_store_result(&mysql);
-        if(result == NULL)
-        {
-            printf("kong");
-        }
         MYSQL_ROW row = mysql_fetch_row(result);
+        if(row == NULL)
+        {
+            if(send((*info)->fd,"n\n",sizeof("n\n"),0) < 0)
+            {
+                my_err("send",__LINE__);
+            }        
+            close_mysql(&mysql);
+            pthread_mutex_unlock(&mysql_mutex);
+            pthread_exit(NULL);
+        }
         char temp_pass[20];
         memcpy(temp_pass,row[2],sizeof(temp_pass));
         if(strcmp(row[3],temp->phone_num) == 0)
@@ -179,6 +187,7 @@ void *find_password(void *arg)
     }
     close_mysql(&mysql);
     pthread_mutex_unlock(&mysql_mutex);
+    pthread_exit(NULL);
 }
 
 void* exit_user(void* arg)
@@ -201,6 +210,7 @@ void* exit_user(void* arg)
     }
     close_mysql(&mysql);
     pthread_mutex_unlock(&mysql_mutex);
+    pthread_exit(NULL);
 }
     
     //改变目前的登录状态
