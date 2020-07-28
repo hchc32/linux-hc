@@ -1,8 +1,8 @@
 
 #ObjFiles 定义目标文件
-ObjFiles1=server.o my_error.o my_socket.o mysql.o user_password.o
+ObjFiles1=server.o my_error.o my_socket.o mysql.o user_password.o 
 
-ObjFiles2=client.o my_error.o my_socket.o user_password.o meun.o mysql.o
+ObjFiles2=client.o my_error.o my_socket.o user_password.o meun.o mysql.o friend.o
 
 server:$(ObjFiles1)
 	gcc -o server $(ObjFiles1) `mysql_config --cflags --libs`  

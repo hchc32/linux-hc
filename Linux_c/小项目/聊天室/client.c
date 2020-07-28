@@ -13,6 +13,7 @@
 #include"my_socket.h"
 #include"meun.h"
 #include"user_password.h"
+#include"friend.h"
 
 #define BUFSIZE 1024
 #define INVALID_USERINFO 'n' //用户信息无效
@@ -145,7 +146,31 @@ int main(int argc,char *argv[])
                         }
                         strcpy(cli_info,temp);
                         printf("登录成功!\n");
-                        Fun_Menu();
+                        //登录成功后开一个线程，用来收数据，并存到消息链表中
+                        while(1)
+                        {
+                            Fun_Menu();
+                            int select;
+                            printf("请输入你的选项:");
+                            scanf("%d",&select);
+                            switch(select+4)
+                            {
+                                case ADDFRIEND:{
+                                                    if(add_friend(sfd,cli_info) == 1)
+                                                    {
+                                                        printf("加好友成功!\n");
+                                                    }
+                                                    else
+                                                    {
+                                                        printf("加好友失败!\n");
+                                                    }
+                                                    break;
+                                                }
+                                case FRIENDLIST:{
+
+                                                }
+                            }
+                        }
                         //进入登录模块的功能
                         break;
                    }
