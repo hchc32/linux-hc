@@ -248,14 +248,15 @@ void *add_friend(void *arg)
         }
         else
         {
-            int friend_fd = atoi(row[0]);
-            int flag = atoi(row[5]);
+           // int friend_fd = atoi(row[0]);
+            //int flag = atoi(row[5]);
             Data send_temp;
             memset(&temp,0,sizeof(temp));
             send_temp.type = ADDF;
             strcpy(send_temp.strings,temp->my_accounts);
+           
             //在线
-            if(flag == 1)
+           /* if(flag == 1)
             {
                 //发送给friend验证消息
                 if(send(friend_fd,&send_temp,sizeof(send_temp),0) < 0)
@@ -265,21 +266,139 @@ void *add_friend(void *arg)
                 
             }
             else
-            {
-                //存在消息表中(消息类型:1 -- 好友验证消息 2 -- 消息)
+            {*/
+                //存在消息表中(消息类型:1 -- 好友验证消息 2 -- 消息  3 -- 好友验证回复消息)
                 memset(mysql_temp,0,sizeof(mysql_temp));
-                sprintf(mysql_temp,"insert into 消息表 values('%s','%s','1','%s')"\
+                sprintf(mysql_temp,"insert into 消息表 values('%s','%s','20','%s')"\
                         ,temp->my_accounts,temp->friend_accounts,send_temp.strings);
                 if(mysql_query(&mysql,mysql_temp) < 0)
                 {
                     my_err("mysql_query",__LINE__);
                 }
-            }
+                if(send((*info)->fd,"y\n",sizeof("y\n"),0) < 0)
+                {
+                    my_err("send",__LINE__);
+                }
+           // }
         }
     } 
     close_mysql(&mysql);
     pthread_mutex_unlock(&mysql_mutex);
     pthread_exit(NULL);
+}
+
+void *friend_apply(void *arg)
+{
+    Sock **info = (Sock**)arg;
+    Addfriend *temp = (Addfriend*)(*info)->data;
+    char mysql_temp[200];
+    //同意加好友
+    pthread_mutex_lock(&mysql_mutex);
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__);
+    }
+    if(temp->flag == VALID_USERINFO)
+    {
+        //更新数据库的好友表
+        mysql_query(&mysql,"use try");
+        memset(mysql_temp,0,sizeof(mysql_temp));
+        sprintf(mysql_temp,"insert into 好友关系 values('%s','%s','0')",temp->my_accounts,temp->friend_accounts);
+        if(mysql_query(&mysql,mysql_temp) < 0)
+        {
+            my_err("mysql_query",__LINE__);
+        }
+        memset(mysql_temp,0,sizeof(mysql_temp));
+        sprintf(mysql_temp,"insert into 好友关系 values('%s','%s','0')",temp->friend_accounts ,temp->my_accounts);
+        if(mysql_query(&mysql,mysql_temp) < 0)
+        {
+            my_err("mysql_query",__LINE__);
+        }
+        memset(mysql_temp,0,sizeof(mysql_temp));
+        //更新数据库的消息表
+        sprintf(mysql_temp,"insert into 消息表 values('%s','%s','21','%s')"\
+                ,temp->my_accounts,temp->friend_accounts,"对方同意了你的请求!");
+        if(mysql_query(&mysql,mysql_temp) < 0)
+        {
+            my_err("mysql_query",__LINE__);
+        }
+    }
+    else
+    {
+        //发送加好友失败信息->my_accounts
+        //存在消息表中(消息类型:1 -- 好友验证消息 2 -- 消息  3 -- 好友验证回复消息)
+        memset(mysql_temp,0,sizeof(mysql_temp));
+        sprintf(mysql_temp,"insert into 消息表 values('%s','%s','21','%s')"\
+                ,temp->my_accounts,temp->friend_accounts,"对方拒绝了你的请求!");
+        if(mysql_query(&mysql,mysql_temp) < 0)
+        {
+            my_err("mysql_query",__LINE__);
+        }
+    }
+    close_mysql(&mysql);
+    pthread_mutex_lock(&mysql_mutex);
+}
+
+void *friend_list(void *arg)
+{
+    Sock **info = (Sock**)arg;
+    char accounts[10];
+    char mysql_temp[200];
+    int count = 0 ;
+    Data send_data;
+    Friend_data temp[50];
+    int i = 0;
+    strcpy(accounts,(char*)(*info)->data);
+    pthread_mutex_lock(&mysql_mutex);
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__);
+    }
+    mysql_query(&mysql,"use try");
+    memset(mysql_temp,0,sizeof(mysql_temp));
+    sprintf(mysql_temp,"select *from 好友表 where 帐号=%s",accounts);
+    if(mysql_query(&mysql,mysql_temp) < 0)
+    {
+        my_err("send",__LINE__);
+    }
+    else
+    {
+        MYSQL_RES *result = mysql_store_result(&mysql);
+        MYSQL_ROW row ;
+        while( row = mysql_fetch_row(result))
+        {
+            count++;
+        }
+        if(send((*info)->fd,&count,sizeof(count),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+        while( row = mysql_fetch_row(result))
+        {
+            memset(&send_data,0,sizeof(send_data));
+            strcpy(temp[i].accounts,row[1]);
+            i++;
+        }
+        for(int j = 0; j < i ; j++)
+        {
+            memset(mysql_temp,0,sizeof(mysql_temp));
+            sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp[i].accounts);
+            MYSQL_RES *result = mysql_store_result(&mysql);
+            row = mysql_fetch_row(result);
+            strcpy(temp[i].user_name,row[2]);
+            temp[i].flag = atoi(row[4]);
+        }
+        for(int j = 0; j < i; j++)
+        {
+            memcpy(send_data.strings,&temp[i],sizeof(send_data.strings));
+            if(send((*info)->fd,&send_data,sizeof(send_data),0) < 0)
+            {
+                my_err("send",__LINE__);
+            }
+        }
+    }
+    close_mysql(&mysql);
+    pthread_mutex_unlock(&mysql_mutex);
     
 }
     
@@ -376,12 +495,36 @@ void* serv_work(void *arg)
                                 pthread_create(&temp_pth,NULL,add_friend,(void*)&info);
                                 break;
                             }
-                case 6:{
-                       
-                       }
-                case 7:{
 
-                       }
+           case FRIENDAPPLY:{
+                                //解包
+                                Addfriend *temp;
+                                pthread_t temp_pth;
+                                memcpy(&temp,recv_data.strings,sizeof(temp));
+                                info->data = &temp;
+                                pthread_create(&temp_pth,NULL,friend_apply,(void*)&info);
+                                break;
+                       
+                            }
+            case FRIENDLIST:{
+                                //解包
+                                char *accounts = (char*)malloc(sizeof(char)*10);
+                                pthread_t temp_pth;
+                                memcpy(&accounts,recv_data.strings,sizeof(accounts));
+                                info->data = accounts;
+                                pthread_create(&temp_pth,NULL,friend_list,(void*)&info);
+                                break;
+
+                            }
+                case DATABOX:{
+                                //解包
+                                char *accounts = (char*)malloc(sizeof(char)*10);
+                                pthread_t temp_pth;
+                                memcpy(&accounts,recv_data.strings,sizeof(accounts));
+                                info->data = accounts;
+                                pthread_create(&temp_pth,NULL,data_box,(void*)&info);
+                                break;
+                            }
                 default:{
                             break;
                         }

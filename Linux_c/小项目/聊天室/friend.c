@@ -13,7 +13,7 @@
  *描述:string帐号向conn_fd发送添加好友的请求
  *参数:conn_fd -- 套接字
  *        string -- 帐号
- *返回值:成功返回1,失败返回0
+ *返回值:成功返回1,失败返回0,friend_accounts不存在返回-1
 */
 int add_friend(int conn_fd,char *string)
 {
@@ -30,7 +30,6 @@ int add_friend(int conn_fd,char *string)
     {
         my_err("send",__LINE__);
     }
-    
     if(recv(conn_fd,recv_buf,sizeof(recv_buf), 0) < 0)
     {
         my_err("recv",__LINE__);
@@ -39,11 +38,8 @@ int add_friend(int conn_fd,char *string)
     {
         return 1;
     }
-    else
+    else if(recv_buf[0] == 'f')
     {
-        return 0;
+        return -1;
     }
-
-    
-
 }

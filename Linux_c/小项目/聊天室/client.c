@@ -9,6 +9,7 @@
 #include<unistd.h>
 #include<sys/epoll.h>
 #include<mysql/mysql.h>
+#include<assert.h>
 #include"my_error.h"
 #include"my_socket.h"
 #include"meun.h"
@@ -16,9 +17,38 @@
 #include"friend.h"
 
 #define BUFSIZE 1024
-#define INVALID_USERINFO 'n' //用户信息无效
-#define VALID_USERINFO   'y' //用户信息有效
+/*初始化链表list。链表为带头结点的双向循环链表*/
+#define List_Init(list, list_node_t) {					\
+		list=(list_node_t*)malloc(sizeof(list_node_t)); \
+		(list)->next=(list)->prev=list;					\
+	}
+//链表尾插法，list为头指针，new为新节点
+#define List_AddTail(list, newNode) {			\
+		(newNode)->prev=(list)->prev; 		 	\
+		(list)->prev->next=newNode;			 	\
+		(newNode)->next=list;				 	\
+		(list)->prev=newNode;				 	\
+	}
+
+//从删除链表结点node，
+#define List_DelNode(node) {\
+			assert(NULL!=node && node!=(node)->next && node!=(node)->prev);				\
+			(node)->prev->next=(node)->next; 	\
+			(node)->next->prev=(node)->prev;	\
+	}
+
+//从链表中删除并释放结点node
+#define List_FreeNode(node) {	\
+		List_DelNode(node);		\
+		free(node);				\
+	}
+
 char cli_info[10];
+//消息链表
+Box *list;
+//好友链表
+Friend *head;
+
 
 int main(int argc,char *argv[])
 {
@@ -156,22 +186,128 @@ int main(int argc,char *argv[])
                             switch(select+4)
                             {
                                 case ADDFRIEND:{
-                                                    if(add_friend(sfd,cli_info) == 1)
+                                                    //加好友
+                                                    int ret;
+                                                    if((ret = add_friend(sfd,cli_info)) == 1)
                                                     {
-                                                        printf("加好友成功!\n");
+                                                        printf("加好友消息发送成功!\n");
+                                                    }
+                                                    else if(ret == 0)
+                                                    {
+                                                        printf("加好友消息发送失败!\n");
                                                     }
                                                     else
                                                     {
-                                                        printf("加好友失败!\n");
+                                                        printf("该帐号不存在!\n");
                                                     }
                                                     break;
                                                 }
+                                case FRIENDAPPLY:{//加好友申请
+                                                    Addfriend *temp = (Addfriend*)malloc(sizeof(Addfriend));
+                                                    Data *send_data = (Data*)malloc(sizeof(Data));
+                                                    Box *p = list->next;
+                                                    while(p->next != list)
+                                                    {
+                                                        memset(temp,0,sizeof(Addfriend));
+                                                        memset(send_data,0,sizeof(Data));
+                                                        //是好友验证消息
+                                                        if(p->data.data_type == ADDF)
+                                                        {
+                                                            //填充验证加好友包
+                                                            strcpy(temp->friend_accounts,cli_info);
+                                                            strcpy(temp->my_accounts,p->data.s_accounts);
+                                                            send_data->type = FRIENDAPPLY;
+                                                            printf("%s请求加你为好友(y->同意,n->拒绝)",p->data.s_accounts);
+                                                            scanf("%c",&temp->flag);
+                                                            memcpy(send_data->strings,temp,sizeof(send_data->strings));
+                                                            //发送确认好友包
+                                                            if(send(sfd,send_data,sizeof(send_data),0) < 0)
+                                                            {
+                                                                my_err("send",__LINE__);
+                                                            }
+                                                            List_FreeNode(p);
+                                                        }
+                                                        else if(p->data.data_type == ADDFRETURN) //添加好友回执包
+                                                        {
+                                                            printf("\n");
+                                                        }
+                                                    }
+                                                    free(temp);
+                                                    free(send_data);
+                                                 }
                                 case FRIENDLIST:{
-
+                                                    //获取好友列表
+                                                    Data temp;
+                                                    memset(&temp,0,sizeof(temp));
+                                                    temp.type = FRIENDLIST;
+                                                    strcpy(temp.strings,cli_info);
+                                                    if(send(sfd,&temp,sizeof(temp),0) < 0)
+                                                    {
+                                                        my_err("send",__LINE__);
+                                                    }
+                                                    int count;
+                                                    //接受好友个数
+                                                    if(recv(sfd,&count,sizeof(count),0) < 0)
+                                                    {
+                                                        my_err("recv",__LINE__);
+                                                    }
+                                                    List_Init(head,Friend);
+                                                    for(int i = 0 ; i < count ; i++)
+                                                    {
+                                                        memset(&temp,0,sizeof(temp));
+                                                        Friend *newnode = (Friend*)malloc(sizeof(Friend));
+                                                        if(recv(sfd,&temp,sizeof(temp),0) < 0)
+                                                        {
+                                                            my_err("recv",__LINE__);
+                                                        }
+                                                        memcpy(&newnode->data,temp.strings,sizeof(newnode->data));
+                                                        List_AddTail(head,newnode);
+                                                    }
+                                                    Friend *cur = head;
+                                                    printf("----------------------好友列表---------------------\n");
+                                                    printf("---------帐号----------昵称---------在线状态-------\n");
+                                                    for(int i = 0; i < count ; i++)
+                                                    {
+                                                        cur = cur->next;
+                                                        printf("%10s %20s %3d\n" ,cur->data.accounts,cur->data.user_name,\
+                                                               cur->data.flag);
+                                                    }
                                                 }
+                                case DATABOX:{      //查看消息盒子
+                                                    //向服务器请求，消息表中的消息
+                                                    Data temp;
+                                                    memset(&temp,0,sizeof(temp));
+                                                    temp.type = DATABOX;
+                                                    //填充帐号
+                                                    strcpy(temp.strings,cli_info);
+                                                    if(send(sfd,&temp,sizeof(temp),0) < 0)
+                                                    {
+                                                        my_err("send",__LINE__);
+                                                    }
+                                                    int count;
+                                                    //接收消息的个数
+                                                    if(recv(sfd,&count,sizeof(count),0) < 0)
+                                                    {
+                                                        my_err("recv",__LINE__);
+                                                    }
+                                                    List_Init(list,Box);
+                                                    //接受消息存在消息链表中
+                                                    for(int i = 0 ; i < count ; i++)
+                                                    {
+                                                        
+                                                        memset(&temp,0,sizeof(temp));
+                                                        Box *newnode = (Box*)malloc(sizeof(Box));
+                                                        //数据：Ｄａｔａ
+                                                        if(recv(sfd,&temp,sizeof(temp),0) < 0)
+                                                        {
+                                                            my_err("recv",__LINE__);
+                                                        }
+                                                        memcpy(&newnode->data,temp.strings,sizeof(newnode->data));
+                                                        List_AddTail(list,newnode);                            
+                                                    }
+                                            }
                             }
                         }
-                        //进入登录模块的功能
                         break;
                    }
             //找回密码
