@@ -227,8 +227,7 @@ void *add_friend(void *arg)
     }
     printf("%s->%s发好友请求\n",temp->my_accounts,temp->friend_accounts);
     mysql_query(&mysql,"use try");
-    memset(mysql_temp,'\0',sizeof(mysql_temp));
-    sprintf(mysql_temp,"select *from 帐号密码 where 帐号=%s",temp->friend_accounts);
+    sprintf(mysql_temp,"select *from 帐号密码 where 帐号='%s'",temp->friend_accounts);
     if(mysql_query(&mysql,mysql_temp) < 0)
     {
         my_err("send",__LINE__);
@@ -250,11 +249,12 @@ void *add_friend(void *arg)
         {
            // int friend_fd = atoi(row[0]);
             //int flag = atoi(row[5]);
+            /*
             Data send_temp;
             memset(&temp,0,sizeof(temp));
             send_temp.type = ADDF;
-            strcpy(send_temp.strings,temp->my_accounts);
-           
+            strncpy(send_temp.strings,temp->my_accounts,sizeof(temp->my_accounts));
+           */
             //在线
            /* if(flag == 1)
             {
@@ -270,7 +270,7 @@ void *add_friend(void *arg)
                 //存在消息表中(消息类型:1 -- 好友验证消息 2 -- 消息  3 -- 好友验证回复消息)
                 memset(mysql_temp,0,sizeof(mysql_temp));
                 sprintf(mysql_temp,"insert into 消息表 values('%s','%s','20','%s')"\
-                        ,temp->my_accounts,temp->friend_accounts,send_temp.strings);
+                        ,temp->my_accounts,temp->friend_accounts,temp->my_accounts);
                 if(mysql_query(&mysql,mysql_temp) < 0)
                 {
                     my_err("mysql_query",__LINE__);
@@ -365,7 +365,7 @@ void *friend_list(void *arg)
     {
         MYSQL_RES *result = mysql_store_result(&mysql);
         MYSQL_ROW row ;
-        while( row = mysql_fetch_row(result))
+        while( (row = mysql_fetch_row(result)) )
         {
             count++;
         }
@@ -373,7 +373,7 @@ void *friend_list(void *arg)
         {
             my_err("send",__LINE__);
         }
-        while( row = mysql_fetch_row(result))
+        while( (row = mysql_fetch_row(result)) )
         {
             memset(&send_data,0,sizeof(send_data));
             strcpy(temp[i].accounts,row[1]);
@@ -399,8 +399,46 @@ void *friend_list(void *arg)
     }
     close_mysql(&mysql);
     pthread_mutex_unlock(&mysql_mutex);
-    
 }
+
+void *data_box(void *arg)
+{
+    Sock **info = (Sock**)arg;
+    char accounts[10];
+    char mysql_temp[200];
+    s_data temp;
+    Data send_temp;
+    memset(mysql_temp,0,sizeof(mysql_temp));
+    strncpy(accounts,(char*)(*info)->data,sizeof(char)*10);
+    pthread_mutex_lock(&mysql_mutex);
+    if(connect_mysql(&mysql) < 0)
+    {
+        my_err("connect_mysql",__LINE__);
+    }
+    mysql_query(&mysql,"use try");
+    sprintf(mysql_temp,"select *from 消息表 where 帐号2='%s'",accounts);
+    MYSQL_RES *result = mysql_store_result(&mysql);
+    MYSQL_ROW row;
+    while((row = mysql_fetch_row(result)))
+    {
+        memset(&temp,0,sizeof(temp));
+        memset(&send_temp,0,sizeof(send_temp));
+        strcpy(temp.s_accounts,row[0]);
+        strcpy(temp.r_accounts,row[1]);
+        temp.data_type = atoi(row[2]);
+        strcpy(temp.data_string,row[3]);
+        memcpy(send_temp.strings,&temp,sizeof(send_temp.strings));
+        if(send((*info)->fd,&send_temp,sizeof(send_temp),0) < 0)
+        {
+            my_err("send",__LINE__);
+        }
+    }
+    //将accounts的数据发出去
+    close_mysql(&mysql);
+    pthread_mutex_unlock(&mysql_mutex);
+}
+
+
     
     //改变目前的登录状态
     //树结点的删除
@@ -425,7 +463,9 @@ void* serv_work(void *arg)
         char recv_buf[1024];
         int ret;
         Data recv_data;
+        pthread_mutex_lock(&mutex);
         memset(recv_buf,0,sizeof(recv_buf));
+        
         ret = recv(info->fd,&recv_buf,sizeof(recv_buf),0);
         if(ret < 0)
         {
@@ -439,7 +479,7 @@ void* serv_work(void *arg)
         memcpy(&recv_data,recv_buf,sizeof(recv_data));
         //根据客户端发来的ｓｅｌｅｃｔ来选择对应的线程函数
         int select = recv_data.type;
-        printf("typr:%d\n",recv_data.type);
+        printf("type:%d\n",recv_data.type);
         switch(select)
         {
             //注册功能
@@ -495,7 +535,7 @@ void* serv_work(void *arg)
                                 pthread_create(&temp_pth,NULL,add_friend,(void*)&info);
                                 break;
                             }
-
+            //处理好友请求
            case FRIENDAPPLY:{
                                 //解包
                                 Addfriend *temp;
@@ -504,8 +544,8 @@ void* serv_work(void *arg)
                                 info->data = &temp;
                                 pthread_create(&temp_pth,NULL,friend_apply,(void*)&info);
                                 break;
-                       
                             }
+            //获取好友列表
             case FRIENDLIST:{
                                 //解包
                                 char *accounts = (char*)malloc(sizeof(char)*10);
@@ -514,8 +554,8 @@ void* serv_work(void *arg)
                                 info->data = accounts;
                                 pthread_create(&temp_pth,NULL,friend_list,(void*)&info);
                                 break;
-
                             }
+                //消息盒子
                 case DATABOX:{
                                 //解包
                                 char *accounts = (char*)malloc(sizeof(char)*10);
@@ -525,6 +565,8 @@ void* serv_work(void *arg)
                                 pthread_create(&temp_pth,NULL,data_box,(void*)&info);
                                 break;
                             }
+                //私聊
+                
                 default:{
                             break;
                         }
@@ -550,6 +592,7 @@ void* serv_work(void *arg)
             //私聊
             //群聊
         }
+        pthread_mutex_unlock(&mutex);
     
 
     return NULL;
