@@ -1,8 +1,9 @@
-#include <stdio.h>
+#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<mysql/mysql.h>
 #include<sys/socket.h>
+#include<unistd.h>
 #include"mysql.h"
 #include"my_socket.h"
 #include"user_password.h"
@@ -82,15 +83,12 @@ int get_userinfo(char *buf,int len)
  *参数  :conn_fd --- 目标fd
  *返回值:信息正确返回信息结构体指针，否则返回ＮＵＬＬ
 */
-char* login_userinfo(int conn_fd)
+Log login_userinfo(int conn_fd)
 {
     Data temp;
     Log input;
-    char buf[BUFSIZE];
-    char *point = input.accounts;
     memset(&temp,0,sizeof(temp));
     memset(&input,'\0',sizeof(input));
-    memset(buf,'\0',sizeof(buf));
     printf("帐号:\n");
     scanf("%s",input.accounts);
     printf("密码:\n");
@@ -98,23 +96,28 @@ char* login_userinfo(int conn_fd)
     
     temp.type = LOGIN;
     memcpy(temp.strings,&input,sizeof(temp.strings));
-    if(send(conn_fd,&temp,sizeof(buf),0) < 0)
+    if(send(conn_fd,&temp,sizeof(temp),0) < 0)
     {
         my_err("send",__LINE__);
     }
+
+    /*
     //从连接套接字上读取一次数据
-    if(recv(conn_fd,buf,sizeof(buf),0) < 0)
+    if(recv(conn_fd,&recv_temp,sizeof(recv_temp),0) < 0)
     {
         printf("my_recv error! line:%d",__LINE__);
     }
-    if(buf[0] == VALID_USERINFO)                       
+    if(recv_temp.strings[0] != INVALID_USERINFO)                       
     {
+        
+        memcpy(&point,&recv_temp.strings,sizeof(point));
         return point;
     }
     else
     {
-        return NULL;
+        return point;
     }
+    */
 }
 
 /*
@@ -142,6 +145,7 @@ int find_userinfo(int conn_fd)
     {
         my_err("send",__LINE__);
     }
+    /*
     //从连接套接字上读取一次数据
     if(recv(conn_fd,buf,sizeof(buf),0) < 0)
     {
@@ -155,6 +159,6 @@ int find_userinfo(int conn_fd)
     {
         return 0;
     }
+    */
 }
-
 

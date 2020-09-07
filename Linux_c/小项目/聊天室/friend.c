@@ -24,7 +24,7 @@ int add_friend(int conn_fd,char *string)
     printf("请输入你要添加的好友帐号:");
     strcpy(temp.my_accounts,string);
     scanf("%s",temp.friend_accounts);
-    send_temp.type = ADDFRIEND;
+    send_temp.type = ADDF;
     memcpy(&send_temp.strings,&temp,sizeof(send_temp.strings));
     if(send(conn_fd,&send_temp,sizeof(send_temp),0) < 0)
     {

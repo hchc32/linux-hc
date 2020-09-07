@@ -1,0 +1,29 @@
+1.makefile/Makefile的三要素
+	1.目标
+	2.依赖
+	3.规则命令
+
+2.写法:
+
+目标:依赖
+tab键:规则命令
+
+	app:work.c member.h user.h
+    gcc -o app work.c member.h user.h
+
+    如果更改其中一个文件,所有源码重新编译
+	可以考虑编译过程分解,先生成.o文件,然后.o文件都变为可执行文件
+	
+3.规则
+
+makefile的隐含规则:默认处理第一个目标
+
+函数:
+	wildcard 可以进行文件匹配
+	patsubst 内容的替换
+
+makefile的变量:
+	$@代表目标
+	$^代表全部依赖
+	$<第一个依赖
+	$?第一个变化的依赖
