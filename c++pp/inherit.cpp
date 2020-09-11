@@ -5,11 +5,10 @@ using namespace std;
 class A
 {
 public:
-    A() { cout << "A::A()" << endl;}
+    A(int ii):i(ii) { cout << "A::A()" << endl;}
     ~A() { cout << "A::~A()" << endl;}
     void print() { cout << "A::print(),i ="<< i << endl; }
 //子类里面可以用,外人不可以用
-//protected:
     void set(int ii) { i = ii; }
 private:
     int i;
@@ -20,6 +19,8 @@ private:
 class B : public A
 {
 public:
+    B() : A(50) { cout << "B::B()" << endl; }
+    ~B() { cout << "B::~B()" << endl; }
     void f() { set(20); print(); }
 };
 
@@ -27,6 +28,7 @@ public:
 int main()
 {
     B b;
+    b.print();
     b.set(10);
     b.print();
     b.f();
