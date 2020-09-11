@@ -34,3 +34,12 @@
   效果是检测流的状态，流遇到未知错误,istream对象的状态就会变为无效
 
 10.getline函数,丢掉了后面的换行符号.
+
+11.操作string的每一个字符,需要用到字符串的引用,引用是给字符串一个别名
+
+12.要想使用vector
+    #include<vector>
+    using std::vector;
+    vector是一个模板,而不是类型,vector内容纳的是对象,而引用不是对象,所以没有包含引用的vector
+
+13.vector不可以用下标添加元素
