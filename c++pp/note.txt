@@ -51,3 +51,7 @@
 15.没有指向引用的指针,但是有对指针的引用,没有reference的数组
     int & *q;   错误的
     int * &q;   正确的
+
+16.virtual
+   Ellipse
+   
