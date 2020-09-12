@@ -1,0 +1,14 @@
+#include <iostream>
+#include<string>
+
+using namespace std;
+
+int main()
+{
+    string str("Hello Linux!!");
+    auto a = str.begin();
+    auto b = str.end();
+    std::ostream cout << a << endl;
+    std::ostream cout << b << endl;
+    return 0;
+}

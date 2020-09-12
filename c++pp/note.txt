@@ -43,3 +43,7 @@
     vector是一个模板,而不是类型,vector内容纳的是对象,而引用不是对象,所以没有包含引用的vector
 
 13.vector不可以用下标添加元素
+
+14.迭代器的类型
+    iterator         可读写
+    const_iterator   只读
