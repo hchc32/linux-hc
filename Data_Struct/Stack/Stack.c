@@ -1,19 +1,8 @@
 #include <stdio.h>
-
 #include<stdlib.h>
-//栈的数据结点
-typedef struct StackNode
-{
-    int data;
-    struct StackNode* next;
-}StackNode,*LinkStackptr;
+#include"Stack.h"
 
-//栈的元素
-typedef struct LinkStack
-{
-    LinkStackptr  top;
-    int size_stack;
-}LinkStack;
+
 
 //初始化一个空栈
 LinkStack* Init_Stack()
@@ -77,7 +66,7 @@ LinkStack* Destroy_Stack(LinkStack *head)
 }
 
 //若栈不为空,获取栈顶的元素
-void Get_Top(LinkStack *head , int* top_data)
+void Get_Top(LinkStack *head , DataType* top_data)
 {
     if( Is_Empty(head) )
     {
@@ -92,7 +81,7 @@ void Get_Top(LinkStack *head , int* top_data)
 }
 
 //若栈存在，将元素入栈
-int  Push(LinkStack *head , int push_data)
+int  Push(LinkStack *head , DataType push_data)
 {
     if(head == NULL)
     {
@@ -108,7 +97,7 @@ int  Push(LinkStack *head , int push_data)
 }
 
 //若栈存在，将元素出栈
-int Pop(LinkStack *head , int *pop_data)
+int Pop(LinkStack *head , DataType *pop_data)
 {
     LinkStackptr pop_temp; 
     if(head == NULL)
