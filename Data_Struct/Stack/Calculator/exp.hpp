@@ -26,6 +26,7 @@ public:
     double GetValue();
 private:
     string s;
+    //保存后缀表达式
     vector <char> v;
 };
 
@@ -152,6 +153,13 @@ bool Exp::IfLegal()
                 return false;    
             }
         }
+        else if(s[i] == '+')
+        {
+            if(i+1 < size && s[i+1] == ')' || s[i+1] == '(')
+            {
+                return false;
+            }
+        }
     }
     if( count )
     {
@@ -164,7 +172,6 @@ int Exp::GetPriority(char c)
 {
     if(c == '(')    
         return 1;
-
     if(c == '+' || c == '-') 
         return 2;
     else  
@@ -217,7 +224,8 @@ void Exp::toPostfix()
             }
             else if(s[i] == ')')
             {
-                while(!st.empty() && st.top() != ')')
+                //将括号内的符号都进行出栈操作
+                while(!st.empty() && st.top() != '(')
                 {
                     v.push_back(st.top());
                     st.pop();
