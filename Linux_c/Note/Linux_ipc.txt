@@ -1,5 +1,4 @@
-IPC:    (InterProcessCommunication) 
-    进程间通信，通过内核提供的缓冲区进行数据交换的机制/
+IPC:    (InterProcessCommunication)     进程间通信，通过内核提供的缓冲区进行数据交换的机制/
 
 ***********阻塞与非阻塞：是文件的属性，而不是函数的属性
 
@@ -79,7 +78,7 @@ IPC:    (InterProcessCommunication)
             函数所在头文件： #include<unistd.h>
     10.如何设置非阻塞
         
-        管道读写两端默认为阻塞
+        管道读写两端默认为非阻塞
         
         设置读端为非阻塞pipe(fd[0])
             fcntl - 变参函数
@@ -141,7 +140,7 @@ IPC:    (InterProcessCommunication)
                        void *addr,     //映射区首地址，传ＮＵＬＬ
                        size_t length,  //映射区大小   (一般是4k的正整数倍)
                        int prot,       //映射区权限   
-                                     *******PROT_READ --映射区必须有读权限
+                                            PROT_READ --映射区必须有读权限
                                             PROT_WRITE -- 写权限
                        int flags,      //标志位参数
                                             MAP_SHARED
@@ -164,73 +163,7 @@ IPC:    (InterProcessCommunication)
         函数原型:int munmap(void *addr, size_t length);
                  addr 　mmap的返回值 == 映射区的首地址
                  length mmap的第二个参数
-    *******一定要记得释放内存映射区，malloc-->free,open --> close
-    *******mmap  open的文件的权限应该大于等于mmap第三个参数PROT指定的权限
-    *******mmap的offset的值必须是4096的整数倍(byte)
-    
-    (1):mmap函数什么情况下会调用失败?
-        1.第二个参数length = 0
-        2.第三个参数必须要指定读的权限 PROT_READ
-        3.fd的权限必须要大于等于PROT指定的权限
-    (2):open的时候可以新创建一个文件来创建映射区吗？
-        可以，但是必须要先进行文件大小的拓展
-            lseek
-            truncate(path,length)   -----＞还未了解
-    (3)mmap后关闭文件描述符,对mmap映射是没有影响的
-    (4):对ptr进行越界操作会怎么样?
-            越界操作会出现段错误 
-    3.进程间通信
-        １．有血缘关系的
-            父子进程共享内存映射区
-********２．没有血缘关系的进程间如何通信？
-                不能适用匿名映射的方式,
-                只能借助磁盘文件创建映射区,
-                不阻塞.
-                    a进程-＞(a.c), b进程->(b.c)
-                    a.c
-                        int fd = open("hello");
-                        void* ptr = mmap(.....fd,0);
-                        对映射区进行读写操作
-                    b.c
-                        int fd1 = open("hello");
-                        void* ptr1 = mmap(.....fd1,0);
-                        对映射区做读写操作
-                
-                
-    ４.mmap实现内存映射
-        1.必须有一个文件
-        2.文件数据什么时候有用?
-            1.单纯的文件映射(可以用来查看文件的数据)
-            2.进程间通信
-                文件数据没有用
-＊＊＊＊＊＊mmap：效率高，因为数据实在内存中操作的,但是不阻塞
-    5.父子进程永远共享的东西?
-        1.文件描述符
-        2.内存映射区
-
-6.创建匿名映射区(非阻塞的)(有血缘关系才可以)
-    mmap:
-        第二个参数:指定映射区大小
-        第四个参数:需要添加MAP_ANON宏
-        第五个参数:fd --> -1
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
 
 
