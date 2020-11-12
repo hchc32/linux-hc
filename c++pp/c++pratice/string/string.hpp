@@ -1,3 +1,4 @@
+//string类的书写规范
 #ifndef __STRING__
 #define __STRING__
 

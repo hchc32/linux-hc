@@ -2,7 +2,9 @@
 #include<stdlib.h>
 //线索二叉树的存储结构定义
 typedef char TElemType;
+
 typedef enum {Link,Thread} PointerTag; //Link 0 孩子 Thread 1 线索
+
 typedef struct BiThrNode
 {
     TElemType data;                     //结点数据
@@ -22,12 +24,13 @@ int main()
     InOrderThreading( &p,T );
     return 0;
 }
+
 //创建二叉树(前序遍历输入数据)
 void CreatBiThrTree(BiThrTree * T)
 {
     TElemType ch;
     scanf("%c",&ch);
-    if( ch == ' ' )
+    if( ch == '#' )
         *T = NULL;
     else
     {

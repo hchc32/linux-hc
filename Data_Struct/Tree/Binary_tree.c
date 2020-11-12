@@ -1,5 +1,5 @@
-
 //参考大话数据结构
+//创建二叉树 
 #include <stdio.h>
 #include<stdlib.h>
 typedef char TElemType; 
@@ -10,9 +10,13 @@ typedef struct BiTNode
     struct BiTNode *lchild , *rchild;   // 左右孩子指针
 }BiNode,*BiTree;
 
+//创建二叉树
 void CreatBiTree (BiTree *T);
+//二叉树的前序遍历
 void PreOrderTraveres (BiTree T);
+//二叉树的中序遍历
 void InOrderTraveres (BiTree T);
+//二叉树的后序遍历
 void PostOrderTraveres (BiTree T);
 
 
@@ -29,6 +33,7 @@ void CreatBiTree (BiTree *T)
 {
     TElemType ch;
     scanf("%c",&ch);
+    getchar();
     if(ch == '#')
         *T = NULL;
     else
@@ -41,6 +46,7 @@ void CreatBiTree (BiTree *T)
     CreatBiTree (&((*T)->lchild));     // 构建左子树
     CreatBiTree (&(*T)->rchild);       // 构建右子树
 }
+
 // 前序遍历二叉树
 void PreOrderTraveres (BiTree T)
 {
