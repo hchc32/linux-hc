@@ -21,6 +21,7 @@ int main()
 {
     BiThrTree T = NULL,p;
     CreatBiThrTree( &T );
+    InThreading(T);
     InOrderThreading( &p,T );
     return 0;
 }

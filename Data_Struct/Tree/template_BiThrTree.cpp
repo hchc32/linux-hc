@@ -134,11 +134,13 @@ int main()
     ThreadNode<char> *pre;
     ThreadNode<char> *p;
     CreatPreTree(p);
-    //InThreading(p,pre);
+    InThreading(p,pre);
     //InOrderThread(p);
-    cout << endl;
+    //cout << endl;
+    /*
     _InorderTransferTree(p);
     cout<<endl;
     _PostOrderTransferTree(p);
+    */
     return 0;
 }
