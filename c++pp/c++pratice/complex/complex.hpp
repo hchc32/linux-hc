@@ -20,7 +20,6 @@ class complex
 public:
     //构造函数
     complex (double r = 0, double i = 0):re (r) , im (i) {}
-    
     //操作符重载
     complex& operator += (const complex&);
     complex& operator -= (const complex&);

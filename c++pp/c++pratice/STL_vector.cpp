@@ -14,7 +14,6 @@ int main()
     vector<int,allocator<int>> vi(ia,ia+6);
 
     //not1　函数适配器
-    //
     cout << count_if(vi.begin(),vi.end(),not1(bind2nd(less<int>(),40)));
     return 0;
 }
