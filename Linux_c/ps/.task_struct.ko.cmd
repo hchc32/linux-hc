@@ -1,0 +1,1 @@
+cmd_/home/hchc/GitHubRes/linux-hc/Linux_c/ps/task_struct.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000  --build-id  -T ./scripts/module-common.lds -o /home/hchc/GitHubRes/linux-hc/Linux_c/ps/task_struct.ko /home/hchc/GitHubRes/linux-hc/Linux_c/ps/task_struct.o /home/hchc/GitHubRes/linux-hc/Linux_c/ps/task_struct.mod.o;  true
