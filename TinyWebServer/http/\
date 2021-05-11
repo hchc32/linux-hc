@@ -7,17 +7,6 @@
 #include "http_conn.h"
 using namespace std;
 
-//定义http响应的一些状态信息
-const char *ok_200_title = "OK";
-const char *error_400_title = "Bad Request";
-const char *error_400_form = "Your request has bad syntax or is inherently impossible to staisfy.\n";
-const char *error_403_title = "Forbidden";
-const char *error_403_form = "You do not have permission to get file form this server.\n";
-const char *error_404_title = "Not Found";
-const char *error_404_form = "The requested file was not found on this server.\n";
-const char *error_500_title = "Internal Error";
-const char *error_500_form = "There was an unusual problem serving the request file.\n";
-
 //文件地址
 const char *doc_root = "/home/hchc/Desktop/TinyWebServer/TinyWebServer-raw_version/root";
 //数据库锁(登录+注册)
@@ -535,28 +524,7 @@ bool http_conn::add_content_length(int content_len)
 }
 
 //添加文本类型,这里是html
-bool http_conn::add_content_type()
-{
-    return add_response("Content-Type:%s\r\n","text/html");
-}
 
-//添加连接状态,通知浏览器端是保持连接还是关闭
-bool http_conn::add_linger()
-{
-    return add_response("Connection:%s\r\n",(m_linger==true));
-}
-
-//添加空行
-bool http_conn::add_blank_line()
-{
-    return add_response("%s","\r\n");
-}
-
-//添加文本content
-bool http_conn::add_content(const char *content)
-{
-    return add_response("%s",content); 
-}
 
 //响应报文生成函数
 bool http_conn::process_write(HTTP_CODE ret)
@@ -567,79 +535,33 @@ bool http_conn::process_write(HTTP_CODE ret)
         case INTERNAL_ERROR:
         {
             //状态行
-            add_status_line(500,error_500_title);
-            //消息报头
-            add_headers(strlen(error_500_form));
-            if(!add_content(error_500_form))
-                return false;
+            add_status_line();
             break;
         }
         //报文错误,404
         case BAD_REQUEST:
         {
-            add_status_line(404,error_404_title);
-            add_headers(strlen(error_404_form));
-            if(!add_content(error_404_form))
-                return false;
             break;
         }
         //资源没有访问权限,403
         case FORBIDDEN_REQUEST:
         {
-            add_status_line(403,error_403_title);
-            add_headers(strlen(error_403_form));
-            if(!add_content(error_403_form))
-                return false;
             break;
         }
         //文件存在,200
         case FILE_REQUEST:
         {
-            //状态行
-            add_status_line(200,ok_200_title);
-            //请求的资源存在
-            if(m_file_stat.st_size != 0)
-            {
-                //添加头部
-                add_headers(m_file_stat.st_size);
-                //第一个iovec指针指向响应报文缓冲区
-                m_iv[0].iov_base = m_write_buf;
-                m_iv[0].iov_len = m_write_idx;
-
-                //第二个iovec指针指向mmap返回的文件指针
-                m_iv[1].iov_base = m_file_address;
-                m_iv[1].iov_len = m_file_stat.st_size;
-                m_iv_count = 2;
-                //发送的全部数据为响应报文头部信息和文件大小
-                //剩余字节数
-                bytes_to_send = m_write_idx + m_file_stat.st_size;
-                return true;
-            }
-            else
-            {
-                //请求资源为0,则返回空白html文件
-                const char *ok_string = "<html><body></body></html>"o;
-                //添加头部信息
-                add_headers(strlen(ok_string));
-                if(!add_content(ok_string))
-                    return false;
-            }
             break;
         }
         default:
         {
             return false;
         }
+
     }
-    //除FILE_REQUEST状态外,其余状态只申请一个iovec,指向响应报文缓冲区
-    m_iv[0].iov_base = m_write_buf;
-    m_iv[0].iov_len = m_write_idx;
-    m_iv_count = 1;
-    bytes_to_send = m_write_idx;
-    return true;
 }
 
-//执行任务
+
 void http_conn::process()
 {
     //报文解析

@@ -59,7 +59,7 @@ public:
         NO_RESOURCE,
         FORBIDDEN_REQUEST,//请求被服务器拒绝
         FILE_REQUEST,
-        INTERNAL_ERRNO,   //服务器端请求出错
+        INTERNAL_ERROR,   //服务器端请求出错
         CLOSED_CONNECTION
     };
 public:
@@ -80,7 +80,7 @@ private:
     //从m_read_buf读取,并处理请求报文
     HTTP_CODE process_read();
     //向m_write_buf写入响应报文数据
-    bool process_write();
+    bool process_write(HTTP_CODE ret);
     //从状态机状态,分析是请求报文的哪一部分
     LINE_STATUS parse_line();
 
@@ -88,6 +88,16 @@ private:
     HTTP_CODE parse_headers(char *text);
     HTTP_CODE parse_content(char *text);
     HTTP_CODE do_request();
+
+    bool add_response(const char * format,...);
+
+    bool add_status_line(int status,const char *title);
+    bool add_headers(int content_length);
+    bool add_content_type();
+    bool add_content_length(int content_length);
+    bool add_linger();
+    bool add_content(const char *content);
+    bool add_blank_line();
 
     //获取未处理字符
     char *get_line() { return m_read_buf + m_start_line; };
