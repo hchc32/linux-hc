@@ -58,7 +58,7 @@ public:
         BAD_REQUEST,  //http请求报文有语法错误
         NO_RESOURCE,
         FORBIDDEN_REQUEST,//请求被服务器拒绝
-        FILE_RQUEST,
+        FILE_REQUEST,
         INTERNAL_ERRNO,   //服务器端请求出错
         CLOSED_CONNECTION
     };
@@ -83,6 +83,11 @@ private:
     bool process_write();
     //从状态机状态,分析是请求报文的哪一部分
     LINE_STATUS parse_line();
+
+    HTTP_CODE parse_request_line(char *text);
+    HTTP_CODE parse_headers(char *text);
+    HTTP_CODE parse_content(char *text);
+    HTTP_CODE do_request();
 
     //获取未处理字符
     char *get_line() { return m_read_buf + m_start_line; };
@@ -132,6 +137,8 @@ private:
     int m_iv_count;
 
     int cgi;
+    //存储请求头部数据
+    char *m_string;
     //剩余发送字节数
     int bytes_to_send;
     //已经发送字节数
