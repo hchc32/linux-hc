@@ -74,6 +74,15 @@ public:
     //工作线程
     void process();
 
+    bool read_once();
+
+    bool write();
+
+    sockaddr_in *get_address()
+    {
+        return &m_address;
+    }
+
 
 private:
     void init();
@@ -101,6 +110,8 @@ private:
 
     //获取未处理字符
     char *get_line() { return m_read_buf + m_start_line; };
+
+    void unmap();
 
 public:
     static int m_epollfd;

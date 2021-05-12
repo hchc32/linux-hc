@@ -517,6 +517,81 @@ bool http_conn::add_response(const char *format,...)
 }
 
 
+//取消文件映射
+void http_conn::unmap()
+{
+    if(m_file_address)
+    {
+        munmap(m_file_address,m_file_stat.st_size);
+        m_file_address = 0;
+    }
+}
+
+
+bool http_conn::read_once()
+{
+    //读取数据大于缓冲区大小
+    if(m_read_idx >= READ_BUFFER_SIZE)
+    {
+        return false;
+    }
+    int bytes_read = 0;
+    //读取的字节数
+    //ET模式
+    while(true)
+    {
+        bytes_read = recv(m_sockfd,m_read_buf+m_read_idx,READ_BUFFER_SIZE-m_read_idx,0);
+        if(bytes_read == -1)
+        {
+            //暂时没有数据的到来||重启后等待数据的到来
+            if(errno == EAGAIN || errno == EWOULDBLOCK)
+                break;
+            return false;
+        }
+        else if(bytes_read == 0)
+        {
+            return false;
+        }
+        //修改m_read_idx的读取字节数
+        m_read_idx += bytes_read;
+    }
+}
+
+
+bool http_conn::write()
+{
+    int temp = 0;
+    //要发送的数据长度为0
+    if(bytes_to_send == 0)
+    {
+        modfd(m_epollfd,m_sockfd,EPOLLIN);
+        init();
+        return true;
+    }
+
+    while(1)
+    {
+        temp = writev(m_sockfd,m_iv,m_iv_count);
+        if(temp < 0)
+        {
+            if(errno == EAGAIN)
+            {
+                modfd(m_epollfd,m_sockfd,EPOLLOUT);
+                return true;
+            }
+            //取消文件映射
+            unmap();
+            return false;
+        }
+        //已发送字节数
+        bytes_have_send += temp;
+        //更新还需发送字节数
+        bytes_to_send -= temp;
+    }
+
+    
+    
+}
 
 //添加状态行
 bool http_conn::add_status_line(int status,const char *title)
@@ -618,7 +693,7 @@ bool http_conn::process_write(HTTP_CODE ret)
             else
             {
                 //请求资源为0,则返回空白html文件
-                const char *ok_string = "<html><body></body></html>"o;
+                const char *ok_string = "<html><body></body></html>";
                 //添加头部信息
                 add_headers(strlen(ok_string));
                 if(!add_content(ok_string))
