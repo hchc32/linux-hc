@@ -1,4 +1,5 @@
 //Initializer_list 的包可以被拆解,但只限于固定数量的参数
+//背后是array
 #include <iostream>
 using namespace std;
 void print(initializer_list<int> vals)
@@ -33,9 +34,9 @@ int main()
     //print({12,3,5,6,7,6,5,4});
     
     //test P
-    P p(77,5);
-    P q{77,5};
-    P r{1,2,3};
+    //P p(77,5);
+    //P q{77,5};
+    P r={1,2,3};
     return 0;
 }
 
