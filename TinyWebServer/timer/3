@@ -1,0 +1,15 @@
+#ifndef LST_TIMER
+#define LST_TIMER
+#include<time.h>
+#include"../log/log.h"
+class lst_timer
+{
+public:
+    lst_timer() {}
+    ~lst_timer() {}
+
+private:
+
+};
+
+#endif

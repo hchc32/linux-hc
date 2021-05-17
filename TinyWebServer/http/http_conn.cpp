@@ -571,6 +571,7 @@ bool http_conn::write()
 
     while(1)
     {
+        //集中写发送
         temp = writev(m_sockfd,m_iv,m_iv_count);
         if(temp < 0)
         {
@@ -587,10 +588,39 @@ bool http_conn::write()
         bytes_have_send += temp;
         //更新还需发送字节数
         bytes_to_send -= temp;
-    }
+        //第一个iovec头部信息的数据已经发送完类,发送第二个iovec数据
+        if(bytes_have_send >= m_iv[0].iov_len)
+        {
+            m_iv[0].iov_len=0;
+            m_iv[1].iov_base = m_file_address + (bytes_have_send - m_write_idx);
+            m_iv[1].iov_len = bytes_to_send;
+        }
+        else //继续发送第一个头部数据
+        {
+            //起始地址
+            m_iv[0].iov_base = m_write_buf + bytes_have_send;
+            m_iv[0].iov_len = m_iv[0].iov_len - bytes_have_send;
+        }
 
-    
-    
+        //数据全部发送完
+        if(bytes_to_send <= 0)
+        {
+            //取消文件映射
+            unmap();
+            //重置EPOLLSHOT
+            modfd(m_epollfd,m_sockfd,EPOLLIN);
+            //长连接
+            if(m_linger)
+            {
+                init();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }
 
 //添加状态行
