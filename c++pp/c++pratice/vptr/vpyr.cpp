@@ -37,6 +37,7 @@ private:
 
 int main()
 {
+    //sizeof(point) = 8
     cout << sizeof(A) << " ";
     cout << sizeof(B) << " ";
     cout << sizeof(C) << " ";

@@ -11,7 +11,8 @@ public:
 void A::f()
 {
     i = 20;
-    cout << i << endl;
+    if(i>10)
+      cout << i << endl;
 }
 
 //函数是属于类的不是属于对象的
