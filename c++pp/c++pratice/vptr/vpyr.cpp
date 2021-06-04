@@ -25,6 +25,40 @@ namespace test1
              << "sizeof(B) = " <<sizeof(B) << endl;
         return;
     }
+} // namespace test1.
+
+namespace test2
+{
+    class A
+    {
+        public:
+            virtual void func()
+            {
+                cout << "A::Func" << endl;
+            }
+    };
+
+    class B:public A
+    {
+        public:
+            virtual void func() 
+            {
+                cout << "B::func" << endl;
+            }
+    };
+
+    void test_vtable()
+    {
+        A a;
+        A *pa = new B();
+        pa->func();
+
+        int *p1 = (int *)&a;
+        int *p2 = (int *)pa;
+        * p2 = *p1;
+        pa->func();
+        return;
+    }
 } // namespace test1
 
 
@@ -65,7 +99,8 @@ private:
 
 int main()
 {
-    test1::test_sizeof();
+    //test1::test_sizeof();
+    test2::test_vtable();
     // //sizeof(point) = 8
     // cout << sizeof(A) << " ";
     // cout << sizeof(B) << " ";
