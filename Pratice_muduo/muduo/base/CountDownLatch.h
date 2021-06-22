@@ -8,18 +8,27 @@
 namespace muduo
 {
 
+//Condition + Count
 class CountDownLatch : noncopyable
 {
 
 public:
     explicit CountDownLatch(int count);
 
-    ~CountDownLatch();
-    
+    ~CountDownLatch() = default;
+
+    void wait();
+
+    void countDown();
+
+    int getCount() const;
+
+private:
+    mutable MutexLock mutex_;
+    Condition condition_;
+    int count_;
 };
 
-}
-
-
+} // namespace muduo
 
 #endif
