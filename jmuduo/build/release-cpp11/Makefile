@@ -181,6 +181,32 @@ muduo_base/fast:
 .PHONY : muduo_base/fast
 
 #=============================================================================
+# Target rules for targets named LogStream_bench
+
+# Build rule for target.
+LogStream_bench: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LogStream_bench
+.PHONY : LogStream_bench
+
+# fast build rule for target.
+LogStream_bench/fast:
+	$(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/build
+.PHONY : LogStream_bench/fast
+
+#=============================================================================
+# Target rules for targets named LogStream_test
+
+# Build rule for target.
+LogStream_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LogStream_test
+.PHONY : LogStream_test
+
+# fast build rule for target.
+LogStream_test/fast:
+	$(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/build
+.PHONY : LogStream_test/fast
+
+#=============================================================================
 # Target rules for targets named CountDownLatch_test
 
 # Build rule for target.
@@ -285,6 +311,8 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... install"
 	@echo "... muduo_base"
+	@echo "... LogStream_bench"
+	@echo "... LogStream_test"
 	@echo "... CountDownLatch_test"
 	@echo "... Log_test2"
 	@echo "... timestamp_unittest"

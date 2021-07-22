@@ -14,11 +14,13 @@
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base/CMakeFiles/rebuild_cache.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base/CMakeFiles/install.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/install/strip.dir
-/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/install.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/list_install_components.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/rebuild_cache.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/install/local.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/test.dir
+/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/LogStream_bench.dir
+/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/install.dir
+/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/LogStream_test.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/CountDownLatch_test.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/Log_test2.dir
 /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests/CMakeFiles/timestamp_unittest.dir

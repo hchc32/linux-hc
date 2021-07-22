@@ -51,6 +51,16 @@
 },
 {
   "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/LogStream_bench.dir/LogStream_bench.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/LogStream_bench.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/LogStream_bench.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/LogStream_test.dir/LogStream_test.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/LogStream_test.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/LogStream_test.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/tests",
   "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/CountDownLatch_test.cc",
   "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/CountDownLatch_test.cc"
 },

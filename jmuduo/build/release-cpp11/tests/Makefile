@@ -68,18 +68,6 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
 # Special rule for the target list_install_components
 list_install_components:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
@@ -124,6 +112,18 @@ test/fast: test
 
 .PHONY : test/fast
 
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -166,6 +166,36 @@ preinstall/fast:
 depend:
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+# Convenience name for target.
+tests/CMakeFiles/LogStream_bench.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/LogStream_bench.dir/rule
+.PHONY : tests/CMakeFiles/LogStream_bench.dir/rule
+
+# Convenience name for target.
+LogStream_bench: tests/CMakeFiles/LogStream_bench.dir/rule
+
+.PHONY : LogStream_bench
+
+# fast build rule for target.
+LogStream_bench/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/build
+.PHONY : LogStream_bench/fast
+
+# Convenience name for target.
+tests/CMakeFiles/LogStream_test.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/LogStream_test.dir/rule
+.PHONY : tests/CMakeFiles/LogStream_test.dir/rule
+
+# Convenience name for target.
+LogStream_test: tests/CMakeFiles/LogStream_test.dir/rule
+
+.PHONY : LogStream_test
+
+# fast build rule for target.
+LogStream_test/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/build
+.PHONY : LogStream_test/fast
 
 # Convenience name for target.
 tests/CMakeFiles/CountDownLatch_test.dir/rule:
@@ -353,6 +383,60 @@ CountDownLatch_test2.cc.s:
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/CountDownLatch_test2.dir/build.make tests/CMakeFiles/CountDownLatch_test2.dir/CountDownLatch_test2.cc.s
 .PHONY : CountDownLatch_test2.cc.s
 
+LogStream_bench.o: LogStream_bench.cc.o
+
+.PHONY : LogStream_bench.o
+
+# target to build an object file
+LogStream_bench.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/LogStream_bench.cc.o
+.PHONY : LogStream_bench.cc.o
+
+LogStream_bench.i: LogStream_bench.cc.i
+
+.PHONY : LogStream_bench.i
+
+# target to preprocess a source file
+LogStream_bench.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/LogStream_bench.cc.i
+.PHONY : LogStream_bench.cc.i
+
+LogStream_bench.s: LogStream_bench.cc.s
+
+.PHONY : LogStream_bench.s
+
+# target to generate assembly for a file
+LogStream_bench.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/LogStream_bench.cc.s
+.PHONY : LogStream_bench.cc.s
+
+LogStream_test.o: LogStream_test.cc.o
+
+.PHONY : LogStream_test.o
+
+# target to build an object file
+LogStream_test.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/LogStream_test.cc.o
+.PHONY : LogStream_test.cc.o
+
+LogStream_test.i: LogStream_test.cc.i
+
+.PHONY : LogStream_test.i
+
+# target to preprocess a source file
+LogStream_test.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/LogStream_test.cc.i
+.PHONY : LogStream_test.cc.i
+
+LogStream_test.s: LogStream_test.cc.s
+
+.PHONY : LogStream_test.s
+
+# target to generate assembly for a file
+LogStream_test.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/LogStream_test.cc.s
+.PHONY : LogStream_test.cc.s
+
 Log_test1.o: Log_test1.cc.o
 
 .PHONY : Log_test1.o
@@ -468,11 +552,13 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... install/local"
 	@echo "... test"
+	@echo "... LogStream_bench"
+	@echo "... install"
+	@echo "... LogStream_test"
 	@echo "... CountDownLatch_test"
 	@echo "... Log_test2"
 	@echo "... timestamp_unittest"
@@ -490,6 +576,12 @@ help:
 	@echo "... CountDownLatch_test2.o"
 	@echo "... CountDownLatch_test2.i"
 	@echo "... CountDownLatch_test2.s"
+	@echo "... LogStream_bench.o"
+	@echo "... LogStream_bench.i"
+	@echo "... LogStream_bench.s"
+	@echo "... LogStream_test.o"
+	@echo "... LogStream_test.i"
+	@echo "... LogStream_test.s"
 	@echo "... Log_test1.o"
 	@echo "... Log_test1.i"
 	@echo "... Log_test1.s"
