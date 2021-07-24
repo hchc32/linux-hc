@@ -11,10 +11,7 @@ class Base
             //fun2();
         }
 
-        virtual void fun2()
-        {
-            cout << "Base::fun2()" << endl;
-        }
+        virtual void fun2() = 0;
 };
 
 class Derived:public Base
@@ -30,6 +27,6 @@ int main()
 {
     Derived d;
     Base *pBase = &d;
-    pBase->fun1();
+    (*pBase).fun1();
     return 0;
 }
