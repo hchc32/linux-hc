@@ -4,13 +4,18 @@
 #include<muduo/base/noncopyable.h>
 #include<muduo/base/CurrentThread.h>
 #include<muduo/base/Thread.h>
-
+#include<muduo/base/Timestamp.h>
+#include<muduo/net/Channel.h>
+#include<vector>
 using namespace muduo;
-
+using namespace muduo::net;
 namespace muduo
 {
 namespace net
 {
+
+class Channel;
+class Poller;
 
 class EventLoop : noncopyable
 {
@@ -19,7 +24,12 @@ public:
     ~EventLoop();
 
     void loop();
+    void quit();
 
+    Timestamp pollReturnTime() const { return pollReturnTime_; }
+
+    void updateChannel(Channel *channel);//在poller中添加或者更新通道
+    void removeChannel(Channel *channel); //在Poller中移除通道
     void assertInLoopThread()
     {
         if(!isInLoopThread())
@@ -33,20 +43,26 @@ public:
         return threadId_ == CurrentThread::tid();
     }
 
+
     static EventLoop *getEventLoopOfCurrentThread();
 private:
     void abortNotInLoopThread();
 
-    bool looping_;  
-    const pid_t threadId_;
+    void printActiveChannels();
+
+    typedef std::vector<Channel *> ChannelList;
+
+    bool looping_;  //是否处于循环状态
+    bool quit_;     //是否退出loop
+    bool eventHandling_; //当前是否处于事件处理状态
+    const pid_t threadId_; //当前对象所属线程id
+    Timestamp pollReturnTime_; //调用poll返回的时间戳
+    std::unique_ptr<Poller> poller_; //Poller对象(智能指针)
+    ChannelList activeChannels_; //Poller返回的活动通道
+    Channel *currentActiveChannel_; //当前正在处理的活动通道
 };
+} // namespace net
 
-}
-
-}
-
-
-
-
+} // namespace muduo
 
 #endif

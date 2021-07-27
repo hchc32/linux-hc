@@ -1,6 +1,6 @@
 #include<muduo/net/EventLoop.h>
 #include<muduo/base/Logging.h>
-#include<poll.h>
+#include<muduo/net/Poller.h>
 
 using namespace muduo;
 using namespace muduo::net;
@@ -10,6 +10,8 @@ namespace
     //当前线程EventLoop对象指针
     //每个线程都有一份
     __thread EventLoop *t_loopInThisThread = 0;
+
+    const int kPollTimeMs = 10000;
 }
 
 EventLoop* EventLoop::getEventLoopOfCurrentThread()
@@ -19,7 +21,11 @@ EventLoop* EventLoop::getEventLoopOfCurrentThread()
 
 EventLoop::EventLoop()
     : looping_(false),
-      threadId_(CurrentThread::tid())
+      quit_(false),
+      eventHandling_(false),
+      threadId_(CurrentThread::tid()),
+      poller_(Poller::newDefaultPoller(this)), //epoll
+      currentActiveChannel_(NULL)
 {
     LOG_TRACE << "EventLoop created" << this << "in thread " << threadId_;
     if(t_loopInThisThread)
@@ -44,12 +50,61 @@ void EventLoop::loop()
     assert(!looping_);
     assertInLoopThread();
     looping_ = true;
+    quit_ = false;
     LOG_TRACE << "EventLoop " << this << " start looping";
 
-    ::poll(NULL, 0, 5 * 1000);
+    //::poll(NULL, 0, 5 * 1000);
+    while (!quit_)
+    {
+        activeChannels_.clear();
+        //超时时间10s
+        pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+
+        eventHandling_ = true;
+        for (Channel*channel:activeChannels_)
+        {
+            currentActiveChannel_ = channel;
+            currentActiveChannel_->handleEvent(pollReturnTime_);
+        }
+        currentActiveChannel_ = NULL;
+        eventHandling_ = false;
+    }
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
+}
+
+//该函数可以跨线程调用
+void EventLoop::quit()
+{
+    quit_ = true;
+    //不是在io线程调用的,需要唤醒阻塞的io线程
+    if(!isInLoopThread())
+    {
+        //wakeup();
+    }
+}
+
+
+//在poller中添加或者更新通道
+void EventLoop::updateChannel(Channel *channel)
+{
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    poller_->updateChannel(channel);
+}
+
+
+//在Poller中移除通道
+void EventLoop::removeChannel(Channel *channel)
+{
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    if(eventHandling_)
+    {
+        
+    }
+    poller_->removeChannel(channel);
 }
 
 void EventLoop::abortNotInLoopThread()
