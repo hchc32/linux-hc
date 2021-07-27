@@ -13,7 +13,9 @@
 
 #include "muduo/base/Atomic.h"
 #include "muduo/base/Timestamp.h"
-#include "muduo/net/Callbacks.h"
+//#include "muduo/net/Callbacks.h"
+
+#include<functional>
 
 namespace muduo
 {
@@ -25,6 +27,7 @@ namespace net
 ///
 //内部封装一个定时器
 //定时器--->回调函数+定时时间
+typedef std::function<void()> TimerCallback;
 class Timer : noncopyable
 {
  public:

@@ -123,15 +123,17 @@ TimerId TimerQueue::addTimer(TimerCallback cb,  //用户自定义回调函数
                              double interval)   //间隔时间
 {
   Timer* timer = new Timer(std::move(cb), when, interval);
-  loop_->runInLoop(
-      std::bind(&TimerQueue::addTimerInLoop, this, timer)); //注册回调函数
-  return TimerId(timer, timer->sequence());   //唯一标识一个Timer
+  // loop_->runInLoop(
+  //     std::bind(&TimerQueue::addTimerInLoop, this, timer)); //注册回调函数
+  addTimerInLoop(timer);
+  return TimerId(timer, timer->sequence()); //唯一标识一个Timer
 }
 
 void TimerQueue::cancel(TimerId timerId)
 {
-  loop_->runInLoop(
-      std::bind(&TimerQueue::cancelInLoop, this, timerId));
+  // loop_->runInLoop(
+  //     std::bind(&TimerQueue::cancelInLoop, this, timerId));
+  cancelInLoop(timerId);
 }
 
 void TimerQueue::addTimerInLoop(Timer* timer)
