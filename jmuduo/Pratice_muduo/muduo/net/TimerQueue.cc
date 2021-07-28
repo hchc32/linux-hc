@@ -123,9 +123,8 @@ TimerId TimerQueue::addTimer(TimerCallback cb,  //用户自定义回调函数
                              double interval)   //间隔时间
 {
   Timer* timer = new Timer(std::move(cb), when, interval);
-  // loop_->runInLoop(
-  //     std::bind(&TimerQueue::addTimerInLoop, this, timer)); //注册回调函数
-  addTimerInLoop(timer);
+  loop_->runInLoop(
+      std::bind(&TimerQueue::addTimerInLoop, this, timer)); //注册回调函数
   return TimerId(timer, timer->sequence()); //唯一标识一个Timer
 }
 
