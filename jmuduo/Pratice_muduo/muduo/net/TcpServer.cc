@@ -29,7 +29,7 @@ TcpServer::TcpServer(EventLoop* loop,
     acceptor_(new Acceptor(loop, listenAddr, option == kReusePort)),
     threadPool_(new EventLoopThreadPool(loop, name_)),
     connectionCallback_(defaultConnectionCallback),
-    messageCallback_(defaultMessageCallback),
+    //messageCallback_(defaultMessageCallback),
     nextConnId_(1)
 {
   //Acceptor::handleRead()函数会回调TcpServer::newCOnnection

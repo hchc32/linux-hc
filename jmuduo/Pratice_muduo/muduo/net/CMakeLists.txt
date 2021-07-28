@@ -10,6 +10,7 @@ set(net_SRCS
   Channel.cc
   EventLoop.cc
   EventLoopThread.cc
+  EventLoopThreadPool.cc
   InetAddress.cc
   Poller.cc
   poller/DefaultPoller.cc
@@ -21,7 +22,6 @@ set(net_SRCS
   TimerQueue.cc
   TcpServer.cc
   TcpConnection.cc
-
   )
 
 add_library(muduo_net ${net_SRCS})
