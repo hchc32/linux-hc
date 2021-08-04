@@ -12,7 +12,6 @@ tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /home/hchc/pr
 tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/noncopyable.h
 tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/CountDownLatch_test.cc
 tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /usr/local/include/boost/assert.hpp
-tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /usr/local/include/boost/bind.hpp
 tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /usr/local/include/boost/bind/arg.hpp
 tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /usr/local/include/boost/bind/bind.hpp
 tests/CMakeFiles/CountDownLatch_test.dir/CountDownLatch_test.cc.o: /usr/local/include/boost/bind/bind_cc.hpp

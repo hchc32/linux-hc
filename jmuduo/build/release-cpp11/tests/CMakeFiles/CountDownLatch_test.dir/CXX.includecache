@@ -79,7 +79,7 @@ muduo/base/Thread.h
 -
 boost/ptr_container/ptr_vector.hpp
 -
-boost/bind.hpp
+boost/bind/bind.hpp
 -
 
 /usr/local/include/boost/assert.hpp
@@ -88,12 +88,6 @@ boost/config.hpp
 boost/current_function.hpp
 -
 assert.h
--
-
-/usr/local/include/boost/bind.hpp
-boost/bind/bind.hpp
--
-boost/config/pragma_message.hpp
 -
 
 /usr/local/include/boost/bind/arg.hpp

@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/stacktrace.h
+stdio.h
+-
+stdlib.h
+-
+execinfo.h
+-
+cxxabi.h
+-
+iostream
+-
+
+/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/test.cc
+stacktrace.h
+/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/tests/stacktrace.h
+map
+-
+

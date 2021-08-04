@@ -68,27 +68,6 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -101,16 +80,16 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target test
-test/fast: test
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-.PHONY : test/fast
+.PHONY : edit_cache/fast
 
 # Special rule for the target install
 install: preinstall
@@ -124,16 +103,37 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
 
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
 
-.PHONY : edit_cache/fast
+.PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+
+.PHONY : test/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -168,109 +168,109 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-tests/CMakeFiles/LogStream_bench.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/LogStream_bench.dir/rule
-.PHONY : tests/CMakeFiles/LogStream_bench.dir/rule
+tests/CMakeFiles/tcpclient_test.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/tcpclient_test.dir/rule
+.PHONY : tests/CMakeFiles/tcpclient_test.dir/rule
 
 # Convenience name for target.
-LogStream_bench: tests/CMakeFiles/LogStream_bench.dir/rule
+tcpclient_test: tests/CMakeFiles/tcpclient_test.dir/rule
 
-.PHONY : LogStream_bench
+.PHONY : tcpclient_test
 
 # fast build rule for target.
-LogStream_bench/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/build
-.PHONY : LogStream_bench/fast
+tcpclient_test/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/tcpclient_test.dir/build.make tests/CMakeFiles/tcpclient_test.dir/build
+.PHONY : tcpclient_test/fast
 
 # Convenience name for target.
-tests/CMakeFiles/LogStream_test.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/LogStream_test.dir/rule
-.PHONY : tests/CMakeFiles/LogStream_test.dir/rule
+tests/CMakeFiles/reactor_test13.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test13.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test13.dir/rule
 
 # Convenience name for target.
-LogStream_test: tests/CMakeFiles/LogStream_test.dir/rule
+reactor_test13: tests/CMakeFiles/reactor_test13.dir/rule
 
-.PHONY : LogStream_test
+.PHONY : reactor_test13
 
 # fast build rule for target.
-LogStream_test/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/build
-.PHONY : LogStream_test/fast
+reactor_test13/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test13.dir/build.make tests/CMakeFiles/reactor_test13.dir/build
+.PHONY : reactor_test13/fast
 
 # Convenience name for target.
-tests/CMakeFiles/CountDownLatch_test.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/CountDownLatch_test.dir/rule
-.PHONY : tests/CMakeFiles/CountDownLatch_test.dir/rule
+tests/CMakeFiles/reactor_test12.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test12.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test12.dir/rule
 
 # Convenience name for target.
-CountDownLatch_test: tests/CMakeFiles/CountDownLatch_test.dir/rule
+reactor_test12: tests/CMakeFiles/reactor_test12.dir/rule
 
-.PHONY : CountDownLatch_test
+.PHONY : reactor_test12
 
 # fast build rule for target.
-CountDownLatch_test/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/CountDownLatch_test.dir/build.make tests/CMakeFiles/CountDownLatch_test.dir/build
-.PHONY : CountDownLatch_test/fast
+reactor_test12/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test12.dir/build.make tests/CMakeFiles/reactor_test12.dir/build
+.PHONY : reactor_test12/fast
 
 # Convenience name for target.
-tests/CMakeFiles/Log_test2.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/Log_test2.dir/rule
-.PHONY : tests/CMakeFiles/Log_test2.dir/rule
+tests/CMakeFiles/reactor_test11.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test11.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test11.dir/rule
 
 # Convenience name for target.
-Log_test2: tests/CMakeFiles/Log_test2.dir/rule
+reactor_test11: tests/CMakeFiles/reactor_test11.dir/rule
 
-.PHONY : Log_test2
+.PHONY : reactor_test11
 
 # fast build rule for target.
-Log_test2/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/Log_test2.dir/build.make tests/CMakeFiles/Log_test2.dir/build
-.PHONY : Log_test2/fast
+reactor_test11/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test11.dir/build.make tests/CMakeFiles/reactor_test11.dir/build
+.PHONY : reactor_test11/fast
 
 # Convenience name for target.
-tests/CMakeFiles/timestamp_unittest.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/timestamp_unittest.dir/rule
-.PHONY : tests/CMakeFiles/timestamp_unittest.dir/rule
+tests/CMakeFiles/ThreadLocal_test.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/ThreadLocal_test.dir/rule
+.PHONY : tests/CMakeFiles/ThreadLocal_test.dir/rule
 
 # Convenience name for target.
-timestamp_unittest: tests/CMakeFiles/timestamp_unittest.dir/rule
+ThreadLocal_test: tests/CMakeFiles/ThreadLocal_test.dir/rule
 
-.PHONY : timestamp_unittest
+.PHONY : ThreadLocal_test
 
 # fast build rule for target.
-timestamp_unittest/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/timestamp_unittest.dir/build.make tests/CMakeFiles/timestamp_unittest.dir/build
-.PHONY : timestamp_unittest/fast
+ThreadLocal_test/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/ThreadLocal_test.dir/build.make tests/CMakeFiles/ThreadLocal_test.dir/build
+.PHONY : ThreadLocal_test/fast
 
 # Convenience name for target.
-tests/CMakeFiles/CountDownLatch_test2.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/CountDownLatch_test2.dir/rule
-.PHONY : tests/CMakeFiles/CountDownLatch_test2.dir/rule
+tests/CMakeFiles/reactor_test05.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test05.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test05.dir/rule
 
 # Convenience name for target.
-CountDownLatch_test2: tests/CMakeFiles/CountDownLatch_test2.dir/rule
+reactor_test05: tests/CMakeFiles/reactor_test05.dir/rule
 
-.PHONY : CountDownLatch_test2
+.PHONY : reactor_test05
 
 # fast build rule for target.
-CountDownLatch_test2/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/CountDownLatch_test2.dir/build.make tests/CMakeFiles/CountDownLatch_test2.dir/build
-.PHONY : CountDownLatch_test2/fast
+reactor_test05/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test05.dir/build.make tests/CMakeFiles/reactor_test05.dir/build
+.PHONY : reactor_test05/fast
 
 # Convenience name for target.
-tests/CMakeFiles/Log_test1.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/Log_test1.dir/rule
-.PHONY : tests/CMakeFiles/Log_test1.dir/rule
+tests/CMakeFiles/reactor_test07.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test07.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test07.dir/rule
 
 # Convenience name for target.
-Log_test1: tests/CMakeFiles/Log_test1.dir/rule
+reactor_test07: tests/CMakeFiles/reactor_test07.dir/rule
 
-.PHONY : Log_test1
+.PHONY : reactor_test07
 
 # fast build rule for target.
-Log_test1/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/Log_test1.dir/build.make tests/CMakeFiles/Log_test1.dir/build
-.PHONY : Log_test1/fast
+reactor_test07/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test07.dir/build.make tests/CMakeFiles/reactor_test07.dir/build
+.PHONY : reactor_test07/fast
 
 # Convenience name for target.
 tests/CMakeFiles/BlockingQueue_bench.dir/rule:
@@ -288,19 +288,184 @@ BlockingQueue_bench/fast:
 .PHONY : BlockingQueue_bench/fast
 
 # Convenience name for target.
-tests/CMakeFiles/ThreadLocal_test.dir/rule:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/ThreadLocal_test.dir/rule
-.PHONY : tests/CMakeFiles/ThreadLocal_test.dir/rule
+tests/CMakeFiles/Log_test1.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/Log_test1.dir/rule
+.PHONY : tests/CMakeFiles/Log_test1.dir/rule
 
 # Convenience name for target.
-ThreadLocal_test: tests/CMakeFiles/ThreadLocal_test.dir/rule
+Log_test1: tests/CMakeFiles/Log_test1.dir/rule
 
-.PHONY : ThreadLocal_test
+.PHONY : Log_test1
 
 # fast build rule for target.
-ThreadLocal_test/fast:
-	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/ThreadLocal_test.dir/build.make tests/CMakeFiles/ThreadLocal_test.dir/build
-.PHONY : ThreadLocal_test/fast
+Log_test1/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/Log_test1.dir/build.make tests/CMakeFiles/Log_test1.dir/build
+.PHONY : Log_test1/fast
+
+# Convenience name for target.
+tests/CMakeFiles/CountDownLatch_test2.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/CountDownLatch_test2.dir/rule
+.PHONY : tests/CMakeFiles/CountDownLatch_test2.dir/rule
+
+# Convenience name for target.
+CountDownLatch_test2: tests/CMakeFiles/CountDownLatch_test2.dir/rule
+
+.PHONY : CountDownLatch_test2
+
+# fast build rule for target.
+CountDownLatch_test2/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/CountDownLatch_test2.dir/build.make tests/CMakeFiles/CountDownLatch_test2.dir/build
+.PHONY : CountDownLatch_test2/fast
+
+# Convenience name for target.
+tests/CMakeFiles/reactor_test04.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test04.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test04.dir/rule
+
+# Convenience name for target.
+reactor_test04: tests/CMakeFiles/reactor_test04.dir/rule
+
+.PHONY : reactor_test04
+
+# fast build rule for target.
+reactor_test04/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test04.dir/build.make tests/CMakeFiles/reactor_test04.dir/build
+.PHONY : reactor_test04/fast
+
+# Convenience name for target.
+tests/CMakeFiles/timestamp_unittest.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/timestamp_unittest.dir/rule
+.PHONY : tests/CMakeFiles/timestamp_unittest.dir/rule
+
+# Convenience name for target.
+timestamp_unittest: tests/CMakeFiles/timestamp_unittest.dir/rule
+
+.PHONY : timestamp_unittest
+
+# fast build rule for target.
+timestamp_unittest/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/timestamp_unittest.dir/build.make tests/CMakeFiles/timestamp_unittest.dir/build
+.PHONY : timestamp_unittest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/Log_test2.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/Log_test2.dir/rule
+.PHONY : tests/CMakeFiles/Log_test2.dir/rule
+
+# Convenience name for target.
+Log_test2: tests/CMakeFiles/Log_test2.dir/rule
+
+.PHONY : Log_test2
+
+# fast build rule for target.
+Log_test2/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/Log_test2.dir/build.make tests/CMakeFiles/Log_test2.dir/build
+.PHONY : Log_test2/fast
+
+# Convenience name for target.
+tests/CMakeFiles/CountDownLatch_test.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/CountDownLatch_test.dir/rule
+.PHONY : tests/CMakeFiles/CountDownLatch_test.dir/rule
+
+# Convenience name for target.
+CountDownLatch_test: tests/CMakeFiles/CountDownLatch_test.dir/rule
+
+.PHONY : CountDownLatch_test
+
+# fast build rule for target.
+CountDownLatch_test/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/CountDownLatch_test.dir/build.make tests/CMakeFiles/CountDownLatch_test.dir/build
+.PHONY : CountDownLatch_test/fast
+
+# Convenience name for target.
+tests/CMakeFiles/reactor_test01.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test01.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test01.dir/rule
+
+# Convenience name for target.
+reactor_test01: tests/CMakeFiles/reactor_test01.dir/rule
+
+.PHONY : reactor_test01
+
+# fast build rule for target.
+reactor_test01/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test01.dir/build.make tests/CMakeFiles/reactor_test01.dir/build
+.PHONY : reactor_test01/fast
+
+# Convenience name for target.
+tests/CMakeFiles/LogStream_test.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/LogStream_test.dir/rule
+.PHONY : tests/CMakeFiles/LogStream_test.dir/rule
+
+# Convenience name for target.
+LogStream_test: tests/CMakeFiles/LogStream_test.dir/rule
+
+.PHONY : LogStream_test
+
+# fast build rule for target.
+LogStream_test/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_test.dir/build.make tests/CMakeFiles/LogStream_test.dir/build
+.PHONY : LogStream_test/fast
+
+# Convenience name for target.
+tests/CMakeFiles/reactor_test02.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test02.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test02.dir/rule
+
+# Convenience name for target.
+reactor_test02: tests/CMakeFiles/reactor_test02.dir/rule
+
+.PHONY : reactor_test02
+
+# fast build rule for target.
+reactor_test02/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test02.dir/build.make tests/CMakeFiles/reactor_test02.dir/build
+.PHONY : reactor_test02/fast
+
+# Convenience name for target.
+tests/CMakeFiles/LogStream_bench.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/LogStream_bench.dir/rule
+.PHONY : tests/CMakeFiles/LogStream_bench.dir/rule
+
+# Convenience name for target.
+LogStream_bench: tests/CMakeFiles/LogStream_bench.dir/rule
+
+.PHONY : LogStream_bench
+
+# fast build rule for target.
+LogStream_bench/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/LogStream_bench.dir/build.make tests/CMakeFiles/LogStream_bench.dir/build
+.PHONY : LogStream_bench/fast
+
+# Convenience name for target.
+tests/CMakeFiles/reactor_test03.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test03.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test03.dir/rule
+
+# Convenience name for target.
+reactor_test03: tests/CMakeFiles/reactor_test03.dir/rule
+
+.PHONY : reactor_test03
+
+# fast build rule for target.
+reactor_test03/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test03.dir/build.make tests/CMakeFiles/reactor_test03.dir/build
+.PHONY : reactor_test03/fast
+
+# Convenience name for target.
+tests/CMakeFiles/reactor_test06.dir/rule:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/reactor_test06.dir/rule
+.PHONY : tests/CMakeFiles/reactor_test06.dir/rule
+
+# Convenience name for target.
+reactor_test06: tests/CMakeFiles/reactor_test06.dir/rule
+
+.PHONY : reactor_test06
+
+# fast build rule for target.
+reactor_test06/fast:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test06.dir/build.make tests/CMakeFiles/reactor_test06.dir/build
+.PHONY : reactor_test06/fast
 
 BlockingQueue_bench.o: BlockingQueue_bench.cc.o
 
@@ -545,6 +710,303 @@ Timestamp_unittest.cc.s:
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/timestamp_unittest.dir/build.make tests/CMakeFiles/timestamp_unittest.dir/Timestamp_unittest.cc.s
 .PHONY : Timestamp_unittest.cc.s
 
+reactor_test01.o: reactor_test01.cc.o
+
+.PHONY : reactor_test01.o
+
+# target to build an object file
+reactor_test01.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test01.dir/build.make tests/CMakeFiles/reactor_test01.dir/reactor_test01.cc.o
+.PHONY : reactor_test01.cc.o
+
+reactor_test01.i: reactor_test01.cc.i
+
+.PHONY : reactor_test01.i
+
+# target to preprocess a source file
+reactor_test01.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test01.dir/build.make tests/CMakeFiles/reactor_test01.dir/reactor_test01.cc.i
+.PHONY : reactor_test01.cc.i
+
+reactor_test01.s: reactor_test01.cc.s
+
+.PHONY : reactor_test01.s
+
+# target to generate assembly for a file
+reactor_test01.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test01.dir/build.make tests/CMakeFiles/reactor_test01.dir/reactor_test01.cc.s
+.PHONY : reactor_test01.cc.s
+
+reactor_test02.o: reactor_test02.cc.o
+
+.PHONY : reactor_test02.o
+
+# target to build an object file
+reactor_test02.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test02.dir/build.make tests/CMakeFiles/reactor_test02.dir/reactor_test02.cc.o
+.PHONY : reactor_test02.cc.o
+
+reactor_test02.i: reactor_test02.cc.i
+
+.PHONY : reactor_test02.i
+
+# target to preprocess a source file
+reactor_test02.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test02.dir/build.make tests/CMakeFiles/reactor_test02.dir/reactor_test02.cc.i
+.PHONY : reactor_test02.cc.i
+
+reactor_test02.s: reactor_test02.cc.s
+
+.PHONY : reactor_test02.s
+
+# target to generate assembly for a file
+reactor_test02.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test02.dir/build.make tests/CMakeFiles/reactor_test02.dir/reactor_test02.cc.s
+.PHONY : reactor_test02.cc.s
+
+reactor_test03.o: reactor_test03.cc.o
+
+.PHONY : reactor_test03.o
+
+# target to build an object file
+reactor_test03.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test03.dir/build.make tests/CMakeFiles/reactor_test03.dir/reactor_test03.cc.o
+.PHONY : reactor_test03.cc.o
+
+reactor_test03.i: reactor_test03.cc.i
+
+.PHONY : reactor_test03.i
+
+# target to preprocess a source file
+reactor_test03.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test03.dir/build.make tests/CMakeFiles/reactor_test03.dir/reactor_test03.cc.i
+.PHONY : reactor_test03.cc.i
+
+reactor_test03.s: reactor_test03.cc.s
+
+.PHONY : reactor_test03.s
+
+# target to generate assembly for a file
+reactor_test03.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test03.dir/build.make tests/CMakeFiles/reactor_test03.dir/reactor_test03.cc.s
+.PHONY : reactor_test03.cc.s
+
+reactor_test04.o: reactor_test04.cc.o
+
+.PHONY : reactor_test04.o
+
+# target to build an object file
+reactor_test04.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test04.dir/build.make tests/CMakeFiles/reactor_test04.dir/reactor_test04.cc.o
+.PHONY : reactor_test04.cc.o
+
+reactor_test04.i: reactor_test04.cc.i
+
+.PHONY : reactor_test04.i
+
+# target to preprocess a source file
+reactor_test04.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test04.dir/build.make tests/CMakeFiles/reactor_test04.dir/reactor_test04.cc.i
+.PHONY : reactor_test04.cc.i
+
+reactor_test04.s: reactor_test04.cc.s
+
+.PHONY : reactor_test04.s
+
+# target to generate assembly for a file
+reactor_test04.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test04.dir/build.make tests/CMakeFiles/reactor_test04.dir/reactor_test04.cc.s
+.PHONY : reactor_test04.cc.s
+
+reactor_test05.o: reactor_test05.cc.o
+
+.PHONY : reactor_test05.o
+
+# target to build an object file
+reactor_test05.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test05.dir/build.make tests/CMakeFiles/reactor_test05.dir/reactor_test05.cc.o
+.PHONY : reactor_test05.cc.o
+
+reactor_test05.i: reactor_test05.cc.i
+
+.PHONY : reactor_test05.i
+
+# target to preprocess a source file
+reactor_test05.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test05.dir/build.make tests/CMakeFiles/reactor_test05.dir/reactor_test05.cc.i
+.PHONY : reactor_test05.cc.i
+
+reactor_test05.s: reactor_test05.cc.s
+
+.PHONY : reactor_test05.s
+
+# target to generate assembly for a file
+reactor_test05.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test05.dir/build.make tests/CMakeFiles/reactor_test05.dir/reactor_test05.cc.s
+.PHONY : reactor_test05.cc.s
+
+reactor_test06.o: reactor_test06.cc.o
+
+.PHONY : reactor_test06.o
+
+# target to build an object file
+reactor_test06.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test06.dir/build.make tests/CMakeFiles/reactor_test06.dir/reactor_test06.cc.o
+.PHONY : reactor_test06.cc.o
+
+reactor_test06.i: reactor_test06.cc.i
+
+.PHONY : reactor_test06.i
+
+# target to preprocess a source file
+reactor_test06.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test06.dir/build.make tests/CMakeFiles/reactor_test06.dir/reactor_test06.cc.i
+.PHONY : reactor_test06.cc.i
+
+reactor_test06.s: reactor_test06.cc.s
+
+.PHONY : reactor_test06.s
+
+# target to generate assembly for a file
+reactor_test06.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test06.dir/build.make tests/CMakeFiles/reactor_test06.dir/reactor_test06.cc.s
+.PHONY : reactor_test06.cc.s
+
+reactor_test07.o: reactor_test07.cc.o
+
+.PHONY : reactor_test07.o
+
+# target to build an object file
+reactor_test07.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test07.dir/build.make tests/CMakeFiles/reactor_test07.dir/reactor_test07.cc.o
+.PHONY : reactor_test07.cc.o
+
+reactor_test07.i: reactor_test07.cc.i
+
+.PHONY : reactor_test07.i
+
+# target to preprocess a source file
+reactor_test07.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test07.dir/build.make tests/CMakeFiles/reactor_test07.dir/reactor_test07.cc.i
+.PHONY : reactor_test07.cc.i
+
+reactor_test07.s: reactor_test07.cc.s
+
+.PHONY : reactor_test07.s
+
+# target to generate assembly for a file
+reactor_test07.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test07.dir/build.make tests/CMakeFiles/reactor_test07.dir/reactor_test07.cc.s
+.PHONY : reactor_test07.cc.s
+
+reactor_test11.o: reactor_test11.cc.o
+
+.PHONY : reactor_test11.o
+
+# target to build an object file
+reactor_test11.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test11.dir/build.make tests/CMakeFiles/reactor_test11.dir/reactor_test11.cc.o
+.PHONY : reactor_test11.cc.o
+
+reactor_test11.i: reactor_test11.cc.i
+
+.PHONY : reactor_test11.i
+
+# target to preprocess a source file
+reactor_test11.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test11.dir/build.make tests/CMakeFiles/reactor_test11.dir/reactor_test11.cc.i
+.PHONY : reactor_test11.cc.i
+
+reactor_test11.s: reactor_test11.cc.s
+
+.PHONY : reactor_test11.s
+
+# target to generate assembly for a file
+reactor_test11.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test11.dir/build.make tests/CMakeFiles/reactor_test11.dir/reactor_test11.cc.s
+.PHONY : reactor_test11.cc.s
+
+reactor_test12.o: reactor_test12.cc.o
+
+.PHONY : reactor_test12.o
+
+# target to build an object file
+reactor_test12.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test12.dir/build.make tests/CMakeFiles/reactor_test12.dir/reactor_test12.cc.o
+.PHONY : reactor_test12.cc.o
+
+reactor_test12.i: reactor_test12.cc.i
+
+.PHONY : reactor_test12.i
+
+# target to preprocess a source file
+reactor_test12.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test12.dir/build.make tests/CMakeFiles/reactor_test12.dir/reactor_test12.cc.i
+.PHONY : reactor_test12.cc.i
+
+reactor_test12.s: reactor_test12.cc.s
+
+.PHONY : reactor_test12.s
+
+# target to generate assembly for a file
+reactor_test12.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test12.dir/build.make tests/CMakeFiles/reactor_test12.dir/reactor_test12.cc.s
+.PHONY : reactor_test12.cc.s
+
+reactor_test13.o: reactor_test13.cc.o
+
+.PHONY : reactor_test13.o
+
+# target to build an object file
+reactor_test13.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test13.dir/build.make tests/CMakeFiles/reactor_test13.dir/reactor_test13.cc.o
+.PHONY : reactor_test13.cc.o
+
+reactor_test13.i: reactor_test13.cc.i
+
+.PHONY : reactor_test13.i
+
+# target to preprocess a source file
+reactor_test13.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test13.dir/build.make tests/CMakeFiles/reactor_test13.dir/reactor_test13.cc.i
+.PHONY : reactor_test13.cc.i
+
+reactor_test13.s: reactor_test13.cc.s
+
+.PHONY : reactor_test13.s
+
+# target to generate assembly for a file
+reactor_test13.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/reactor_test13.dir/build.make tests/CMakeFiles/reactor_test13.dir/reactor_test13.cc.s
+.PHONY : reactor_test13.cc.s
+
+tcpclient_test.o: tcpclient_test.cc.o
+
+.PHONY : tcpclient_test.o
+
+# target to build an object file
+tcpclient_test.cc.o:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/tcpclient_test.dir/build.make tests/CMakeFiles/tcpclient_test.dir/tcpclient_test.cc.o
+.PHONY : tcpclient_test.cc.o
+
+tcpclient_test.i: tcpclient_test.cc.i
+
+.PHONY : tcpclient_test.i
+
+# target to preprocess a source file
+tcpclient_test.cc.i:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/tcpclient_test.dir/build.make tests/CMakeFiles/tcpclient_test.dir/tcpclient_test.cc.i
+.PHONY : tcpclient_test.cc.i
+
+tcpclient_test.s: tcpclient_test.cc.s
+
+.PHONY : tcpclient_test.s
+
+# target to generate assembly for a file
+tcpclient_test.cc.s:
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11 && $(MAKE) -f tests/CMakeFiles/tcpclient_test.dir/build.make tests/CMakeFiles/tcpclient_test.dir/tcpclient_test.cc.s
+.PHONY : tcpclient_test.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -552,21 +1014,32 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... list_install_components"
-	@echo "... rebuild_cache"
 	@echo "... install/local"
-	@echo "... test"
-	@echo "... LogStream_bench"
-	@echo "... install"
-	@echo "... LogStream_test"
-	@echo "... CountDownLatch_test"
-	@echo "... Log_test2"
-	@echo "... timestamp_unittest"
-	@echo "... CountDownLatch_test2"
-	@echo "... Log_test1"
 	@echo "... edit_cache"
-	@echo "... BlockingQueue_bench"
+	@echo "... tcpclient_test"
+	@echo "... reactor_test13"
+	@echo "... reactor_test12"
+	@echo "... reactor_test11"
+	@echo "... install"
 	@echo "... ThreadLocal_test"
+	@echo "... rebuild_cache"
+	@echo "... reactor_test05"
+	@echo "... reactor_test07"
+	@echo "... BlockingQueue_bench"
+	@echo "... Log_test1"
+	@echo "... CountDownLatch_test2"
+	@echo "... reactor_test04"
+	@echo "... timestamp_unittest"
+	@echo "... list_install_components"
+	@echo "... Log_test2"
+	@echo "... CountDownLatch_test"
+	@echo "... reactor_test01"
+	@echo "... LogStream_test"
+	@echo "... reactor_test02"
+	@echo "... LogStream_bench"
+	@echo "... reactor_test03"
+	@echo "... test"
+	@echo "... reactor_test06"
 	@echo "... BlockingQueue_bench.o"
 	@echo "... BlockingQueue_bench.i"
 	@echo "... BlockingQueue_bench.s"
@@ -594,6 +1067,39 @@ help:
 	@echo "... Timestamp_unittest.o"
 	@echo "... Timestamp_unittest.i"
 	@echo "... Timestamp_unittest.s"
+	@echo "... reactor_test01.o"
+	@echo "... reactor_test01.i"
+	@echo "... reactor_test01.s"
+	@echo "... reactor_test02.o"
+	@echo "... reactor_test02.i"
+	@echo "... reactor_test02.s"
+	@echo "... reactor_test03.o"
+	@echo "... reactor_test03.i"
+	@echo "... reactor_test03.s"
+	@echo "... reactor_test04.o"
+	@echo "... reactor_test04.i"
+	@echo "... reactor_test04.s"
+	@echo "... reactor_test05.o"
+	@echo "... reactor_test05.i"
+	@echo "... reactor_test05.s"
+	@echo "... reactor_test06.o"
+	@echo "... reactor_test06.i"
+	@echo "... reactor_test06.s"
+	@echo "... reactor_test07.o"
+	@echo "... reactor_test07.i"
+	@echo "... reactor_test07.s"
+	@echo "... reactor_test11.o"
+	@echo "... reactor_test11.i"
+	@echo "... reactor_test11.s"
+	@echo "... reactor_test12.o"
+	@echo "... reactor_test12.i"
+	@echo "... reactor_test12.s"
+	@echo "... reactor_test13.o"
+	@echo "... reactor_test13.i"
+	@echo "... reactor_test13.s"
+	@echo "... tcpclient_test.o"
+	@echo "... tcpclient_test.i"
+	@echo "... tcpclient_test.s"
 .PHONY : help
 
 

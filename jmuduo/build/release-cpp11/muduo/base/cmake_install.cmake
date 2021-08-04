@@ -59,6 +59,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/TimeZone.h"
     "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Timestamp.h"
     "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Types.h"
+    "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/WeakCallback.h"
     "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/copyable.h"
     "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/noncopyable.h"
     "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/tempCodeRunnerFile.h"
