@@ -61,6 +61,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
+  include("/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/http/cmake_install.cmake")
+  include("/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/inspect/cmake_install.cmake")
   include("/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/tests/cmake_install.cmake")
 
 endif()

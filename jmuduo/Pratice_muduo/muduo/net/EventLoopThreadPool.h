@@ -27,6 +27,7 @@ namespace net
 class EventLoop;
 class EventLoopThread;
 
+//开启若干个io线程,并让这些线程处于事件循环状态
 class EventLoopThreadPool : noncopyable
 {
  public:
@@ -54,13 +55,13 @@ class EventLoopThreadPool : noncopyable
 
  private:
 
-  EventLoop* baseLoop_;
-  string name_;
-  bool started_;
-  int numThreads_;
-  int next_;
-  std::vector<std::unique_ptr<EventLoopThread>> threads_;
-  std::vector<EventLoop*> loops_;
+  EventLoop* baseLoop_; //与acceptor所属的EventLoop相同
+  string name_;//io线程池名称
+  bool started_;//是否启动
+  int numThreads_;//线程数
+  int next_;//新连接到来,所选择的EventLoop对象下标
+  std::vector<std::unique_ptr<EventLoopThread>> threads_;//io线程列表
+  std::vector<EventLoop*> loops_;//EventLoop列表
 };
 
 }  // namespace net

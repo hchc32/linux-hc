@@ -71,6 +71,7 @@ class Channel : noncopyable
   //不关注任何事件了
   void disableAll() { events_ = kNoneEvent; update(); }
   
+  //还在关注POLLOUT事件
   bool isWriting() const { return events_ & kWriteEvent; }
   bool isReading() const { return events_ & kReadEvent; }
 

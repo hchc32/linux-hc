@@ -3,7 +3,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 class Test : public boost::enable_shared_from_this<Test>        //改进1
-{
+{ 
 public:
     //析构函数
     ~Test() { std::cout << "Test Destructor." << std::endl; }
@@ -12,14 +12,22 @@ public:
     {
         return shared_from_this();      //改进2
     }
+
+    Test* GetThis()
+    {
+        return this;
+    }
 };
 int main(int argc, char *argv[])
 {
   //  {
-        boost::shared_ptr<Test> p( new Test( ));
+        boost::shared_ptr<Test> p( new Test());
         boost::shared_ptr<Test> q = p->GetObject();
+        Test *r = p->GetThis();
+        boost::shared_ptr<Test> ep(r);
         std::cout << "q.use_count(): " << q.use_count() << std::endl;
-  //  }
-
-    return 0;
+        std::cout << "ep.use_count(): " << ep.use_count() << std::endl;
+        //  }
+        //assert(ep == q);
+        return 0;
 }

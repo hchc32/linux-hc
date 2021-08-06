@@ -1,0 +1,6 @@
+*.a
+*.o
+*.swp
+*.out
+profile*.pb.gz
+core

@@ -64,7 +64,9 @@ class TcpServer : noncopyable
   /// - 1 means all I/O in another thread.
   /// - N means a thread pool with N threads, new connections
   ///   are assigned on a round-robin basis.
+  //设置线程池中io线程的数量<不包含mainreactor>
   void setThreadNum(int numThreads);
+  //线程初始化回调函数
   void setThreadInitCallback(const ThreadInitCallback& cb)
   { threadInitCallback_ = cb; }
   /// valid after calling start()
@@ -118,8 +120,8 @@ class TcpServer : noncopyable
   ConnectionCallback connectionCallback_;//连接到来的回调函数
   MessageCallback messageCallback_;//消息到来的回调函数
 
-  WriteCompleteCallback writeCompleteCallback_;
-  ThreadInitCallback threadInitCallback_;
+  WriteCompleteCallback writeCompleteCallback_;//写完成回调函数
+  ThreadInitCallback threadInitCallback_;//线程初始化回调函数
   AtomicInt32 started_; //是否已经启动了
   // always in loop thread
   int nextConnId_;  //下一个连接id

@@ -25,6 +25,7 @@ using namespace muduo;
 using namespace muduo::net;
 
 //使用匿名命名空间.
+//全局对象
 namespace
 {
 //线程局部存储变量
@@ -71,9 +72,9 @@ EventLoop::EventLoop()
     callingPendingFunctors_(false),
     iteration_(0),
     threadId_(CurrentThread::tid()),//当前线程的真实id
-    poller_(Poller::newDefaultPoller(this)),
-    timerQueue_(new TimerQueue(this)),
-    wakeupFd_(createEventfd()),
+    poller_(Poller::newDefaultPoller(this)),//3 fd
+    timerQueue_(new TimerQueue(this)),//4 fd
+    wakeupFd_(createEventfd()),//5 wakeup fd
     wakeupChannel_(new Channel(this, wakeupFd_)),
     currentActiveChannel_(NULL)
 {

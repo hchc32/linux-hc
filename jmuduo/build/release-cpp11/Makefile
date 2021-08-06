@@ -194,6 +194,71 @@ muduo_net/fast:
 .PHONY : muduo_net/fast
 
 #=============================================================================
+# Target rules for targets named httpserver_test
+
+# Build rule for target.
+httpserver_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 httpserver_test
+.PHONY : httpserver_test
+
+# fast build rule for target.
+httpserver_test/fast:
+	$(MAKE) -f muduo/net/http/CMakeFiles/httpserver_test.dir/build.make muduo/net/http/CMakeFiles/httpserver_test.dir/build
+.PHONY : httpserver_test/fast
+
+#=============================================================================
+# Target rules for targets named httprequest_unittest
+
+# Build rule for target.
+httprequest_unittest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 httprequest_unittest
+.PHONY : httprequest_unittest
+
+# fast build rule for target.
+httprequest_unittest/fast:
+	$(MAKE) -f muduo/net/http/CMakeFiles/httprequest_unittest.dir/build.make muduo/net/http/CMakeFiles/httprequest_unittest.dir/build
+.PHONY : httprequest_unittest/fast
+
+#=============================================================================
+# Target rules for targets named muduo_http
+
+# Build rule for target.
+muduo_http: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 muduo_http
+.PHONY : muduo_http
+
+# fast build rule for target.
+muduo_http/fast:
+	$(MAKE) -f muduo/net/http/CMakeFiles/muduo_http.dir/build.make muduo/net/http/CMakeFiles/muduo_http.dir/build
+.PHONY : muduo_http/fast
+
+#=============================================================================
+# Target rules for targets named muduo_inspect
+
+# Build rule for target.
+muduo_inspect: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 muduo_inspect
+.PHONY : muduo_inspect
+
+# fast build rule for target.
+muduo_inspect/fast:
+	$(MAKE) -f muduo/net/inspect/CMakeFiles/muduo_inspect.dir/build.make muduo/net/inspect/CMakeFiles/muduo_inspect.dir/build
+.PHONY : muduo_inspect/fast
+
+#=============================================================================
+# Target rules for targets named inspector_test
+
+# Build rule for target.
+inspector_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 inspector_test
+.PHONY : inspector_test
+
+# fast build rule for target.
+inspector_test/fast:
+	$(MAKE) -f muduo/net/inspect/CMakeFiles/inspector_test.dir/build.make muduo/net/inspect/CMakeFiles/inspector_test.dir/build
+.PHONY : inspector_test/fast
+
+#=============================================================================
 # Target rules for targets named InetAddress_unittest
 
 # Build rule for target.
@@ -481,6 +546,11 @@ help:
 	@echo "... install"
 	@echo "... muduo_base"
 	@echo "... muduo_net"
+	@echo "... httpserver_test"
+	@echo "... httprequest_unittest"
+	@echo "... muduo_http"
+	@echo "... muduo_inspect"
+	@echo "... inspector_test"
 	@echo "... InetAddress_unittest"
 	@echo "... tcpclient_test"
 	@echo "... reactor_test13"

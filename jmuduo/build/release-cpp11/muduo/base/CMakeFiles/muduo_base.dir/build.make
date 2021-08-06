@@ -148,9 +148,35 @@ muduo/base/CMakeFiles/muduo_base.dir/CurrentThread.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/muduo_base.dir/CurrentThread.cc.s"
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/CurrentThread.cc -o CMakeFiles/muduo_base.dir/CurrentThread.cc.s
 
+muduo/base/CMakeFiles/muduo_base.dir/FileUtil.cc.o: muduo/base/CMakeFiles/muduo_base.dir/flags.make
+muduo/base/CMakeFiles/muduo_base.dir/FileUtil.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/FileUtil.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/FileUtil.cc.o"
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/muduo_base.dir/FileUtil.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/FileUtil.cc
+
+muduo/base/CMakeFiles/muduo_base.dir/FileUtil.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/muduo_base.dir/FileUtil.cc.i"
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/FileUtil.cc > CMakeFiles/muduo_base.dir/FileUtil.cc.i
+
+muduo/base/CMakeFiles/muduo_base.dir/FileUtil.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/muduo_base.dir/FileUtil.cc.s"
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/FileUtil.cc -o CMakeFiles/muduo_base.dir/FileUtil.cc.s
+
+muduo/base/CMakeFiles/muduo_base.dir/ProcessInfo.cc.o: muduo/base/CMakeFiles/muduo_base.dir/flags.make
+muduo/base/CMakeFiles/muduo_base.dir/ProcessInfo.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/ProcessInfo.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/ProcessInfo.cc.o"
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/muduo_base.dir/ProcessInfo.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/ProcessInfo.cc
+
+muduo/base/CMakeFiles/muduo_base.dir/ProcessInfo.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/muduo_base.dir/ProcessInfo.cc.i"
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/ProcessInfo.cc > CMakeFiles/muduo_base.dir/ProcessInfo.cc.i
+
+muduo/base/CMakeFiles/muduo_base.dir/ProcessInfo.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/muduo_base.dir/ProcessInfo.cc.s"
+	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/ProcessInfo.cc -o CMakeFiles/muduo_base.dir/ProcessInfo.cc.s
+
 muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.o: muduo/base/CMakeFiles/muduo_base.dir/flags.make
 muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Logging.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.o"
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/muduo_base.dir/Logging.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Logging.cc
 
 muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.i: cmake_force
@@ -163,7 +189,7 @@ muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.s: cmake_force
 
 muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.o: muduo/base/CMakeFiles/muduo_base.dir/flags.make
 muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/TimeZone.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.o"
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/muduo_base.dir/TimeZone.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/TimeZone.cc
 
 muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.i: cmake_force
@@ -176,7 +202,7 @@ muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.s: cmake_force
 
 muduo/base/CMakeFiles/muduo_base.dir/Date.cc.o: muduo/base/CMakeFiles/muduo_base.dir/flags.make
 muduo/base/CMakeFiles/muduo_base.dir/Date.cc.o: /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Date.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/Date.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object muduo/base/CMakeFiles/muduo_base.dir/Date.cc.o"
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/muduo_base.dir/Date.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Date.cc
 
 muduo/base/CMakeFiles/muduo_base.dir/Date.cc.i: cmake_force
@@ -196,6 +222,8 @@ muduo_base_OBJECTS = \
 "CMakeFiles/muduo_base.dir/LogStream.cc.o" \
 "CMakeFiles/muduo_base.dir/Exception.cc.o" \
 "CMakeFiles/muduo_base.dir/CurrentThread.cc.o" \
+"CMakeFiles/muduo_base.dir/FileUtil.cc.o" \
+"CMakeFiles/muduo_base.dir/ProcessInfo.cc.o" \
 "CMakeFiles/muduo_base.dir/Logging.cc.o" \
 "CMakeFiles/muduo_base.dir/TimeZone.cc.o" \
 "CMakeFiles/muduo_base.dir/Date.cc.o"
@@ -210,12 +238,14 @@ lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/CountDownLatch.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/LogStream.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/Exception.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/CurrentThread.cc.o
+lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/FileUtil.cc.o
+lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/ProcessInfo.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/Logging.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/TimeZone.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/Date.cc.o
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/build.make
 lib/libmuduo_base.a: muduo/base/CMakeFiles/muduo_base.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library ../../lib/libmuduo_base.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX static library ../../lib/libmuduo_base.a"
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && $(CMAKE_COMMAND) -P CMakeFiles/muduo_base.dir/cmake_clean_target.cmake
 	cd /home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/muduo_base.dir/link.txt --verbose=$(VERBOSE)
 

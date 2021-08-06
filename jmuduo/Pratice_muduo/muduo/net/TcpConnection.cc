@@ -20,6 +20,7 @@
 using namespace muduo;
 using namespace muduo::net;
 
+//默认连接到来/关闭回调函数
 void muduo::net::defaultConnectionCallback(const TcpConnectionPtr& conn)
 {
   LOG_TRACE << conn->localAddress().toIpPort() << " -> "
@@ -28,6 +29,7 @@ void muduo::net::defaultConnectionCallback(const TcpConnectionPtr& conn)
   // do not call conn->forceClose(), because some users want to register message callback only.
 }
 
+//默认消息到来函数
 void muduo::net::defaultMessageCallback(const TcpConnectionPtr&,
                                         Buffer* buf,
                                         Timestamp)
@@ -55,10 +57,13 @@ TcpConnection::TcpConnection(EventLoop* loop,
       std::bind(&TcpConnection::handleRead, this, _1));
   channel_->setWriteCallback(
       std::bind(&TcpConnection::handleWrite, this));
+  //连接关闭,回调TcpConnection::handleClose()
   channel_->setCloseCallback(
       std::bind(&TcpConnection::handleClose, this));
+  //发生错误,回调TcpConnection::handleError()
   channel_->setErrorCallback(
       std::bind(&TcpConnection::handleError, this));
+
   LOG_DEBUG << "TcpConnection::ctor[" <<  name_ << "] at " << this
             << " fd=" << sockfd;
   socket_->setKeepAlive(true);
@@ -90,6 +95,7 @@ void TcpConnection::send(const void* data, int len)
   send(StringPiece(static_cast<const char*>(data), len));
 }
 
+//线程安全的,可以跨线程调用
 void TcpConnection::send(const StringPiece& message)
 {
   if (state_ == kConnected)
@@ -111,6 +117,7 @@ void TcpConnection::send(const StringPiece& message)
 }
 
 // FIXME efficiency!!!
+//线程安全的
 void TcpConnection::send(Buffer* buf)
 {
   if (state_ == kConnected)
@@ -118,6 +125,7 @@ void TcpConnection::send(Buffer* buf)
     if (loop_->isInLoopThread())
     {
       sendInLoop(buf->peek(), buf->readableBytes());
+      //缓冲区位置改动
       buf->retrieveAll();
     }
     else
@@ -140,7 +148,10 @@ void TcpConnection::sendInLoop(const StringPiece& message)
 void TcpConnection::sendInLoop(const void* data, size_t len)
 {
   loop_->assertInLoopThread();
+  //sockets::write(channel_->fd(), data, len);
+
   ssize_t nwrote = 0;
+  //待发送字节
   size_t remaining = len;
   bool faultError = false;
   if (state_ == kDisconnected)
@@ -149,18 +160,20 @@ void TcpConnection::sendInLoop(const void* data, size_t len)
     return;
   }
   // if no thing in output queue, try writing directly
+  //没有关注可写事件,并且outputbuffer没有数据,直接write
   if (!channel_->isWriting() && outputBuffer_.readableBytes() == 0)
   {
     nwrote = sockets::write(channel_->fd(), data, len);
     if (nwrote >= 0)
     {
       remaining = len - nwrote;
+      //待发送的数据都写到了内核缓冲区
       if (remaining == 0 && writeCompleteCallback_)
       {
         loop_->queueInLoop(std::bind(writeCompleteCallback_, shared_from_this()));
       }
     }
-    else // nwrote < 0
+    else // nwrote < 0 出错处理
     {
       nwrote = 0;
       if (errno != EWOULDBLOCK)
@@ -175,9 +188,11 @@ void TcpConnection::sendInLoop(const void* data, size_t len)
   }
 
   assert(remaining <= len);
+  //没有错误并且还有未写完的数据(说明内核中的发送缓冲区满了,要将未写完的数据添加到output buffer当中)
   if (!faultError && remaining > 0)
   {
     size_t oldLen = outputBuffer_.readableBytes();
+    //如果超过了高水位标,回调hignWaterMarkCallback_
     if (oldLen + remaining >= highWaterMark_
         && oldLen < highWaterMark_
         && highWaterMarkCallback_)
@@ -187,14 +202,14 @@ void TcpConnection::sendInLoop(const void* data, size_t len)
     outputBuffer_.append(static_cast<const char*>(data)+nwrote, remaining);
     if (!channel_->isWriting())
     {
-      channel_->enableWriting();
+      channel_->enableWriting(); //关注POLLOUT事件
     }
   }
 }
 
 void TcpConnection::shutdown()
 {
-  // FIXME: use compare and swap
+  // FIXME: use compare and swap 可以改为原子操作
   if (state_ == kConnected)
   {
     setState(kDisconnecting);
@@ -205,7 +220,9 @@ void TcpConnection::shutdown()
 
 void TcpConnection::shutdownInLoop()
 {
+  //是否在io线程中
   loop_->assertInLoopThread();
+  //不再关注POLLOUT事件
   if (!channel_->isWriting())
   {
     // we are not writing
@@ -326,11 +343,20 @@ void TcpConnection::connectEstablished()
   loop_->assertInLoopThread();
   assert(state_ == kConnecting);
   setState(kConnected);
+  //use_count = 3
+  //LOG_TRACE << "[3] usecount=" << shared_from_this().use_count();
+  //2
+  //shared_from_this()继承自身的shared_ptr对象
+  //3
   channel_->tie(shared_from_this());
+  //2
   //TcpConnection所对应的通道加入到Poller来关注
   channel_->enableReading();
-
+  //连接建立时,用户的回调函数
+  //3
   connectionCallback_(shared_from_this());
+  //2
+  //LOG_TRACE << "[4] usecount=" << shared_from_this().use_count();//3
 }
 
 void TcpConnection::connectDestroyed()
@@ -341,37 +367,39 @@ void TcpConnection::connectDestroyed()
     setState(kDisconnected);
     channel_->disableAll();
 
+    //用户回调函数
     connectionCallback_(shared_from_this());
   }
+  //channel从poller中移除
   channel_->remove();
 }
 
 void TcpConnection::handleRead(Timestamp receiveTime)
 {
-  // loop_->assertInLoopThread();
-  // int savedErrno = 0;
-  // ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
-  // if (n > 0)
-  // {
-  //   messageCallback_(shared_from_this(), &inputBuffer_, receiveTime);
-  // }
-  // else if (n == 0)
-  // {
-  //   handleClose();
-  // }
-  // else
-  // {
-  //   errno = savedErrno;
-  //   LOG_SYSERR << "TcpConnection::handleRead";
-  //   handleError();
-  // }
   loop_->assertInLoopThread();
-  char buf[65536];
-  ssize_t n = ::read(channel_->fd(), buf, sizeof(buf));
+  int savedErrno = 0;
+  ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+  //char buf[65536];
+  //ssize_t n = ::read(channel_->fd(), buf, sizeof(buf));
   //把当前的TcpConnection对象转化为shared_ptr
-  messageCallback_(shared_from_this(),buf,n);
+  if (n > 0)
+  {
+    messageCallback_(shared_from_this(), &inputBuffer_, receiveTime);
+    //messageCallback_(shared_from_this(),buf,n);
+  } 
+  else if (n == 0)
+  {
+    handleClose();
+  }
+  else
+  {
+    errno = savedErrno;
+    LOG_SYSERR << "TcpConnection::handleRead";
+    handleError();
+  }
 }
 
+//内核缓冲区有空间了,回调该函数
 void TcpConnection::handleWrite()
 {
   loop_->assertInLoopThread();
@@ -382,17 +410,21 @@ void TcpConnection::handleWrite()
                                outputBuffer_.readableBytes());
     if (n > 0)
     {
+      //调整缓冲区下标
       outputBuffer_.retrieve(n);
-      if (outputBuffer_.readableBytes() == 0)
+      if (outputBuffer_.readableBytes() == 0) //发送缓冲区已经清空了
       {
-        channel_->disableWriting();
+        channel_->disableWriting(); //停止关注POLLOUT事件,以免出现busy loop
         if (writeCompleteCallback_)
         {
+          //应用层发送缓冲区内被清空,回调WriteCompleteCallback_函数
           loop_->queueInLoop(std::bind(writeCompleteCallback_, shared_from_this()));
         }
+        //shutdowm时,如果TcpConnection处于isWriting状态,
+        //就只会把STATES改为kDisconnecting,然后等数据发送完之后,在此处调用shutdownInLoop
         if (state_ == kDisconnecting)
         {
-          shutdownInLoop();
+          shutdownInLoop(); //关闭连接
         }
       }
     }
@@ -421,10 +453,14 @@ void TcpConnection::handleClose()
   setState(kDisconnected);
   channel_->disableAll();
 
-  TcpConnectionPtr guardThis(shared_from_this());
-  connectionCallback_(guardThis);
+  TcpConnectionPtr guardThis(shared_from_this());//cctor
+  connectionCallback_(guardThis);//这一行可以不调用
+
+  //LOG_TRACE << "[7] usecount=" << guardThis.use_count();//3
+
   // must be the last line
-  closeCallback_(guardThis);
+  closeCallback_(guardThis); //内部回调函数,回调TcpServer::removeConnection()
+  //LOG_TRACE << "[11] usecount=" << guardThis.use_count();//3
 }
 
 void TcpConnection::handleError()

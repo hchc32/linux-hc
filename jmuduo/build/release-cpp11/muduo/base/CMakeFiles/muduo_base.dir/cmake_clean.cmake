@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/muduo_base.dir/LogStream.cc.o"
   "CMakeFiles/muduo_base.dir/Exception.cc.o"
   "CMakeFiles/muduo_base.dir/CurrentThread.cc.o"
+  "CMakeFiles/muduo_base.dir/FileUtil.cc.o"
+  "CMakeFiles/muduo_base.dir/ProcessInfo.cc.o"
   "CMakeFiles/muduo_base.dir/Logging.cc.o"
   "CMakeFiles/muduo_base.dir/TimeZone.cc.o"
   "CMakeFiles/muduo_base.dir/Date.cc.o"

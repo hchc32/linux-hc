@@ -41,6 +41,7 @@ Channel::~Channel()
   if (loop_->isInLoopThread())
   {
     assert(!loop_->hasChannel(this));
+
   }
 }
 
@@ -68,21 +69,33 @@ void Channel::handleEvent(Timestamp receiveTime)
   std::shared_ptr<void> guard;
   if (tied_)
   {
-    guard = tie_.lock();
+    guard = tie_.lock();//弱引用提升为shared_ptr
     if (guard)
     {
+      //LOG_TRACE << "[6] usecount=" << guard.use_count();//2
       handleEventWithGuard(receiveTime);
+      //LOG_TRACE << "[12] usecount=" << guard.use_count();//2
     }
   }
   else
   {
     handleEventWithGuard(receiveTime);
   }
+  LOG_TRACE << "[13] usecount=" << guard.use_count();//2
+  //函数结束之后use_count=1
 }
 
 void Channel::handleEventWithGuard(Timestamp receiveTime)
 {
   eventHandling_ = true;
+  // if(revents_ & POLLHUP)
+  // {
+  //   LOG_TRACE << "1111111111111111";
+  // }
+  // if(revents_ & POLLIN)
+  // {
+  //   LOG_TRACE << "22222222222222222";
+  // }
   LOG_TRACE << reventsToString();
   if ((revents_ & POLLHUP) && !(revents_ & POLLIN))
   {

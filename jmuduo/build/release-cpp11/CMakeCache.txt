@@ -309,6 +309,12 @@ muduo_SOURCE_DIR:STATIC=/home/hchc/projects/GitFile/jmuduo/Pratice_muduo
 muduo_base_LIB_DEPENDS:STATIC=general;pthread;general;rt;
 
 //Dependencies for the target
+muduo_http_LIB_DEPENDS:STATIC=general;muduo_net;
+
+//Dependencies for the target
+muduo_inspect_LIB_DEPENDS:STATIC=general;muduo_http;
+
+//Dependencies for the target
 muduo_net_LIB_DEPENDS:STATIC=general;muduo_base;
 
 
@@ -422,7 +428,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=8
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

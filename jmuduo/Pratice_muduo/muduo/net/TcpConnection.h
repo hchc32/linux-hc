@@ -77,12 +77,14 @@ class TcpConnection : noncopyable,
   void stopRead();
   bool isReading() const { return reading_; }; // NOT thread safe, may race with start/stopReadInLoop
 
+  //未知类型赋值给context
   void setContext(const boost::any& context)
   { context_ = context; }
 
   const boost::any& getContext() const
   { return context_; }
 
+  //get之后可以更改该context_对象
   boost::any* getMutableContext()
   { return &context_; }
 
@@ -141,15 +143,22 @@ class TcpConnection : noncopyable,
 
   const InetAddress localAddr_;//本机地址
   const InetAddress peerAddr_;//对等方地址
-  ConnectionCallback connectionCallback_;
-  MessageCallback messageCallback_;
+  ConnectionCallback connectionCallback_;//连接建立/断开回调函数
+  MessageCallback messageCallback_;//消息到来回调函数
+
+  //1.数据发送完毕回调函数,即所有的用户数据都已经拷贝到内核缓冲区时的回调函数
+  //编写大流量的应用程序,需要该函数
+  //不断生成数据.然后进行conn->send() 
+  //2.outputbuffer_被清空时也会回调该函数,可以理解为低水位标回调函数
   WriteCompleteCallback writeCompleteCallback_;
+  //高水位标回调函数
   HighWaterMarkCallback highWaterMarkCallback_;
-  CloseCallback closeCallback_;
-  size_t highWaterMark_;
-  Buffer inputBuffer_;
-  Buffer outputBuffer_; // FIXME: use list<Buffer> as output buffer.
-  boost::any context_;
+
+  CloseCallback closeCallback_;//内部连接断开回调函数
+  size_t highWaterMark_;//高水位标
+  Buffer inputBuffer_;//应用层接受缓冲区
+  Buffer outputBuffer_; // 应用层发送缓冲区 FIXME: use list<Buffer> as output buffer.
+  boost::any context_; //绑定一个未知类型的上下文对象
   // FIXME: creationTime_, lastReceiveTime_
   //        bytesReceived_, bytesSent_
 };

@@ -36,6 +36,16 @@
 },
 {
   "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_base.dir/FileUtil.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/FileUtil.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/FileUtil.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_base.dir/ProcessInfo.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/ProcessInfo.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/ProcessInfo.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/base",
   "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_base.dir/Logging.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Logging.cc",
   "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/base/Logging.cc"
 },
@@ -143,6 +153,56 @@
   "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net",
   "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_net.dir/TcpConnection.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/TcpConnection.cc",
   "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/TcpConnection.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/http",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/httpserver_test.dir/tests/HttpServer_test.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/tests/HttpServer_test.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/tests/HttpServer_test.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/http",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/httprequest_unittest.dir/tests/HttpRequest_unittest.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/tests/HttpRequest_unittest.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/tests/HttpRequest_unittest.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/http",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_http.dir/HttpServer.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/HttpServer.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/HttpServer.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/http",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_http.dir/HttpResponse.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/HttpResponse.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/HttpResponse.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/http",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_http.dir/HttpContext.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/HttpContext.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/http/HttpContext.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/inspect",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_inspect.dir/Inspector.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/Inspector.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/Inspector.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/inspect",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_inspect.dir/PerformanceInspector.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/PerformanceInspector.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/PerformanceInspector.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/inspect",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_inspect.dir/ProcessInspector.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/ProcessInspector.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/ProcessInspector.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/inspect",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/muduo_inspect.dir/SystemInspector.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/SystemInspector.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/SystemInspector.cc"
+},
+{
+  "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/inspect",
+  "command": "/usr/bin/c++   -I/usr/local/include -I/home/hchc/projects/GitFile/jmuduo/Pratice_muduo  -pthread -I/usr/local/include -pthread -L/usr/local/lib -lprotobuf -lpthread -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Werror -Wconversion -Wno-unused-parameter -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wshadow -Wwrite-strings -march=native -std=c++11 -rdynamic -lboost_system -O2 -DNDEBUG   -o CMakeFiles/inspector_test.dir/tests/Inspector_test.cc.o -c /home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/tests/Inspector_test.cc",
+  "file": "/home/hchc/projects/GitFile/jmuduo/Pratice_muduo/muduo/net/inspect/tests/Inspector_test.cc"
 },
 {
   "directory": "/home/hchc/projects/GitFile/jmuduo/build/release-cpp11/muduo/net/tests",
